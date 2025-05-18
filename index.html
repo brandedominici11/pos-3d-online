@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,176 +10,350 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0D1117; /* Base background - Very dark blue/gray */
-            color: #c9d1d9; /* Default light text color */
-            padding-top: 60px; /* Adjust if header height changes */
+            background-color: #0D1117;
+            /* Base background - Very dark blue/gray */
+            color: #c9d1d9;
+            /* Default light text color */
+            padding-top: 60px;
+            /* Adjust if header height changes */
         }
-
         /* Glassmorphism effect for cards and modals */
-        .card-glass, .modal-glass-content {
-            background-color: rgba(30, 37, 50, 0.6); /* Semi-transparent dark slate with more opacity */
+        
+        .card-glass,
+        .modal-glass-content {
+            background-color: rgba(30, 37, 50, 0.6);
+            /* Semi-transparent dark slate with more opacity */
             backdrop-filter: blur(10px) saturate(180%);
             -webkit-backdrop-filter: blur(10px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 1rem; /* rounded-xl */
+            border-radius: 1rem;
+            /* rounded-xl */
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
         }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
         /* Text Colors */
-        .text-main { color: #e6edf3; /* Brighter white/light gray for main text */ }
-        .text-secondary { color: #7d8590; /* Softer gray for secondary text */ }
-        .text-label { color: #afb8c1; /* Light gray for labels */ }
-
+        
+        .text-main {
+            color: #e6edf3;
+            /* Brighter white/light gray for main text */
+        }
+        
+        .text-secondary {
+            color: #7d8590;
+            /* Softer gray for secondary text */
+        }
+        
+        .text-label {
+            color: #afb8c1;
+            /* Light gray for labels */
+        }
         /* Form Elements Styling */
-        .form-input-custom, .form-select-custom, .form-file-custom {
-            background-color: rgba(13, 17, 23, 0.5); /* Darker, slightly transparent input background */
+        
+        .form-input-custom,
+        .form-select-custom,
+        .form-file-custom {
+            background-color: rgba(13, 17, 23, 0.5);
+            /* Darker, slightly transparent input background */
             border-color: rgba(255, 255, 255, 0.15);
             color: #e6edf3;
             border-width: 1px;
-            border-radius: 0.5rem; /* rounded-lg */
-            padding: 0.625rem 0.875rem; /* p-2.5 px-3.5 */
+            border-radius: 0.5rem;
+            /* rounded-lg */
+            padding: 0.625rem 0.875rem;
+            /* p-2.5 px-3.5 */
             width: 100%;
             transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
-        .form-input-custom::placeholder { color: #7d8590; }
-        .form-input-custom:focus, .form-select-custom:focus, .form-file-custom:focus {
-            border-color: #58a6ff; /* Accent blue for focus */
+        
+        .form-input-custom::placeholder {
+            color: #7d8590;
+        }
+        
+        .form-input-custom:focus,
+        .form-select-custom:focus,
+        .form-file-custom:focus {
+            border-color: #58a6ff;
+            /* Accent blue for focus */
             box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
             outline: none;
         }
-
         /* Custom file input button styling */
-        .form-file-custom::-webkit-file-upload-button { visibility: hidden; }
+        
+        .form-file-custom::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+        
         .form-file-custom::before {
-            content: 'Seleccionar archivo'; display: inline-block; 
-            background: rgba(88, 166, 255, 0.2); /* Accent blue, transparent */
-            border: 1px solid rgba(88, 166, 255, 0.5); 
-            border-radius: 0.375rem; /* rounded-md */
-            padding: 0.375rem 0.75rem; /* py-1.5 px-3 */
-            outline: none; white-space: nowrap; cursor: pointer; font-weight: 500;
-            font-size: 0.875rem; color: #58a6ff;
+            content: 'Seleccionar archivo';
+            display: inline-block;
+            background: rgba(88, 166, 255, 0.2);
+            /* Accent blue, transparent */
+            border: 1px solid rgba(88, 166, 255, 0.5);
+            border-radius: 0.375rem;
+            /* rounded-md */
+            padding: 0.375rem 0.75rem;
+            /* py-1.5 px-3 */
+            outline: none;
+            white-space: nowrap;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #58a6ff;
             transition: background-color 0.2s ease;
         }
-        .form-file-custom:hover::before { background-color: rgba(88, 166, 255, 0.3); }
         
+        .form-file-custom:hover::before {
+            background-color: rgba(88, 166, 255, 0.3);
+        }
         /* Disabled Product Styling (remains for functionality) */
-        .disabled-product { background-color: #4b5563 !important; cursor: not-allowed; opacity: 0.6; }
-        .disabled-product:hover { background-color: #4b5563 !important; }
-
+        
+        .disabled-product {
+            background-color: #4b5563 !important;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .disabled-product:hover {
+            background-color: #4b5563 !important;
+        }
         /* Modal Styling */
-        .modal { display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
-        .modal.active { display: flex; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 50;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
         /* .modal-content-bg is replaced by .modal-glass-content */
         
         #message-modal-text pre {
-            white-space: pre-wrap; word-wrap: break-word; max-height: 60vh; 
-            overflow-y: auto; text-align: left; 
-            background-color: rgba(13, 17, 23, 0.7); /* Darker background for pre */
-            color: #e6edf3; padding: 1rem; border-radius: 0.5rem; /* rounded-lg */
-            border: 1px solid rgba(255, 255, 255, 0.1); 
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 60vh;
+            overflow-y: auto;
+            text-align: left;
+            background-color: rgba(13, 17, 23, 0.7);
+            /* Darker background for pre */
+            color: #e6edf3;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            /* rounded-lg */
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         /* Header and Nav Styling */
-        .header-bg { 
-            background-color: rgba(13, 17, 23, 0.7); /* Dark, slightly transparent header */
+        
+        .header-bg {
+            background-color: rgba(13, 17, 23, 0.7);
+            /* Dark, slightly transparent header */
             backdrop-filter: blur(8px) saturate(150%);
             -webkit-backdrop-filter: blur(8px) saturate(150%);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            position: fixed; /* Fixed header */
+            position: fixed;
+            /* Fixed header */
             top: 0;
             left: 0;
             right: 0;
-            z-index: 20; /* Ensure header is above body content but below modals */
+            z-index: 20;
+            /* Ensure header is above body content but below modals */
         }
-        .nav-bg { 
-            background-color: transparent; /* Nav background integrated with header or main content area */
+        
+        .nav-bg {
+            background-color: transparent;
+            /* Nav background integrated with header or main content area */
             /* Tabs will be styled directly */
         }
+        
         .tab-button {
-            color: #7d8590; /* Default tab text color */
+            color: #7d8590;
+            /* Default tab text color */
             border-bottom-width: 2px;
             border-color: transparent;
             transition: color 0.2s ease, border-color 0.2s ease;
         }
+        
         .tab-button:hover {
-            color: #58a6ff; /* Accent blue on hover */
+            color: #58a6ff;
+            /* Accent blue on hover */
         }
-        .tab-active-border { border-color: #58a6ff; /* Accent blue for active tab border */ }
-        .tab-active-text { color: #58a6ff; /* Accent blue for active tab text */ font-weight: 600; }
-
+        
+        .tab-active-border {
+            border-color: #58a6ff;
+            /* Accent blue for active tab border */
+        }
+        
+        .tab-active-text {
+            color: #58a6ff;
+            /* Accent blue for active tab text */
+            font-weight: 600;
+        }
         /* Button Styling (Modernized) */
+        
         .btn {
-            padding: 0.625rem 1.25rem; /* py-2.5 px-5 */
-            border-radius: 0.5rem; /* rounded-lg */
-            font-weight: 600; /* semibold */
+            padding: 0.625rem 1.25rem;
+            /* py-2.5 px-5 */
+            border-radius: 0.5rem;
+            /* rounded-lg */
+            font-weight: 600;
+            /* semibold */
             transition: background-color 0.2s ease, transform 0.1s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             border: 1px solid transparent;
         }
-        .btn:active { transform: translateY(1px); }
-
-        .btn-primary-green { background-color: #238636; color: white; border-color: #2ea043; }
-        .btn-primary-green:hover { background-color: #2ea043; }
         
-        .btn-secondary-blue { background-color: #388bfd; color: white; border-color: #58a6ff;}
-        .btn-secondary-blue:hover { background-color: #58a6ff; }
-
-        .btn-accent-teal { background-color: #238669; color: white; border-color: #2ea083;}
-        .btn-accent-teal:hover { background-color: #2ea083; }
-
-        .btn-warning-orange { background-color: #c9510c; color: white; border-color: #f57831;}
-        .btn-warning-orange:hover { background-color: #e16f23; }
-
-        .btn-danger-red { background-color: #da3633; color: white; border-color: #f85149;}
-        .btn-danger-red:hover { background-color: #f85149; }
-
-        .btn-neutral-gray { background-color: #21262d; color: #e6edf3; border-color: #30363d;}
-        .btn-neutral-gray:hover { background-color: #30363d; }
-
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-primary-green {
+            background-color: #238636;
+            color: white;
+            border-color: #2ea043;
+        }
+        
+        .btn-primary-green:hover {
+            background-color: #2ea043;
+        }
+        
+        .btn-secondary-blue {
+            background-color: #388bfd;
+            color: white;
+            border-color: #58a6ff;
+        }
+        
+        .btn-secondary-blue:hover {
+            background-color: #58a6ff;
+        }
+        
+        .btn-accent-teal {
+            background-color: #238669;
+            color: white;
+            border-color: #2ea083;
+        }
+        
+        .btn-accent-teal:hover {
+            background-color: #2ea083;
+        }
+        
+        .btn-warning-orange {
+            background-color: #c9510c;
+            color: white;
+            border-color: #f57831;
+        }
+        
+        .btn-warning-orange:hover {
+            background-color: #e16f23;
+        }
+        
+        .btn-danger-red {
+            background-color: #da3633;
+            color: white;
+            border-color: #f85149;
+        }
+        
+        .btn-danger-red:hover {
+            background-color: #f85149;
+        }
+        
+        .btn-neutral-gray {
+            background-color: #21262d;
+            color: #e6edf3;
+            border-color: #30363d;
+        }
+        
+        .btn-neutral-gray:hover {
+            background-color: #30363d;
+        }
         /* Product Image Styling */
-        .product-image-preview { 
-            width: 60px; height: 60px; object-fit: cover; 
-            border-radius: 0.5rem; /* rounded-lg */
-            border: 1px solid rgba(255, 255, 255, 0.1); 
+        
+        .product-image-preview {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            /* rounded-lg */
+            border: 1px solid rgba(255, 255, 255, 0.1);
             background-color: rgba(13, 17, 23, 0.5);
         }
-        .product-image-sales { 
-            width: 100%; height: 100px; /* Increased height for better visual */
-            object-fit: cover; 
-            border-radius: 0.75rem 0.75rem 0 0; /* rounded-xl top */
+        
+        .product-image-sales {
+            width: 100%;
+            height: 100px;
+            /* Increased height for better visual */
+            object-fit: cover;
+            border-radius: 0.75rem 0.75rem 0 0;
+            /* rounded-xl top */
         }
-        .product-image-placeholder, .product-image-sales-placeholder {
-            display: flex; align-items: center; justify-content: center;
+        
+        .product-image-placeholder,
+        .product-image-sales-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background-color: rgba(13, 17, 23, 0.5);
-            color: #7d8590; font-size: 0.875rem;
+            color: #7d8590;
+            font-size: 0.875rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .product-image-placeholder { width: 60px; height: 60px; border-radius: 0.5rem; /* rounded-lg */ }
-        .product-image-sales-placeholder { width: 100%; height: 100px; border-radius: 0.75rem 0.75rem 0 0; /* rounded-xl top */ }
-
+        
+        .product-image-placeholder {
+            width: 60px;
+            height: 60px;
+            border-radius: 0.5rem;
+            /* rounded-lg */
+        }
+        
+        .product-image-sales-placeholder {
+            width: 100%;
+            height: 100px;
+            border-radius: 0.75rem 0.75rem 0 0;
+            /* rounded-xl top */
+        }
         /* POS product card styling */
+        
         #pos-product-list button {
-             /* Uses .card-glass for base, additional styling if needed */
+            /* Uses .card-glass for base, additional styling if needed */
             text-align: center;
         }
-        #pos-product-list button .p-2 { /* Ensure padding for text content in POS product cards */
-            padding: 0.75rem; /* p-3 */
+        
+        #pos-product-list button .p-2 {
+            /* Ensure padding for text content in POS product cards */
+            padding: 0.75rem;
+            /* p-3 */
         }
-        #pos-product-list button .text-sm { font-size: 0.875rem; }
-        #pos-product-list button .text-xs { font-size: 0.75rem; }
-
+        
+        #pos-product-list button .text-sm {
+            font-size: 0.875rem;
+        }
+        
+        #pos-product-list button .text-xs {
+            font-size: 0.75rem;
+        }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col">
 
     <header class="header-bg text-white p-4 shadow-lg">
         <h1 class="text-2xl font-bold text-center text-main">Sistema de Gestión Tienda 3D</h1>
     </header>
 
-    <nav class="nav-bg shadow-md fixed top-[60px] left-0 right-0 z-10"> <div class="max-w-xl mx-auto flex">
+    <nav class="nav-bg shadow-md fixed top-[60px] left-0 right-0 z-10">
+        <div class="max-w-xl mx-auto flex">
             <button id="tab-inventario" class="tab-button flex-1 py-3 px-2 text-center font-semibold">
                 Gestión de Inventario
             </button>
@@ -188,7 +363,8 @@
         </div>
     </nav>
 
-    <main class="flex-grow p-4 max-w-xl mx-auto w-full mt-16"> <section id="content-inventario" class="tab-content active space-y-6">
+    <main class="flex-grow p-4 max-w-xl mx-auto w-full mt-16">
+        <section id="content-inventario" class="tab-content active space-y-6">
             <div>
                 <h2 class="text-xl font-semibold mb-3 text-main">Materia Prima: Plástico</h2>
                 <div class="card-glass p-4">
@@ -205,7 +381,7 @@
                     <button id="add-plastic-button" class="w-full btn btn-accent-teal py-2.5 px-4">
                         Agregar Tipo de Plástico
                     </button>
-                    
+
                     <h3 class="text-lg font-semibold mt-6 mb-3 text-main">Stock de Plásticos</h3>
                     <div id="plastic-stock-list" class="space-y-3">
                         <p class="text-secondary text-sm">No hay plásticos registrados.</p>
@@ -263,8 +439,8 @@
                     </div>
                 </div>
             </div>
-             <div class="mt-6 card-glass p-4 space-y-3">
-                 <h3 class="text-lg font-semibold mb-2 text-main">Opciones Generales de Tienda</h3>
+            <div class="mt-6 card-glass p-4 space-y-3">
+                <h3 class="text-lg font-semibold mb-2 text-main">Opciones Generales de Tienda</h3>
                 <button id="generate-store-summary-button" class="w-full btn btn-secondary-blue py-2.5 px-4">
                     Generar Resumen de Ventas del Día
                 </button>
@@ -275,7 +451,7 @@
         </section>
 
         <section id="content-pos" class="tab-content space-y-6">
-             <h2 class="text-xl font-semibold mb-4 text-main">Seleccionar Productos para Vender</h2>
+            <h2 class="text-xl font-semibold mb-4 text-main">Seleccionar Productos para Vender</h2>
             <div id="pos-product-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
                 <p class="text-secondary text-sm col-span-full">No hay productos disponibles para la venta.</p>
             </div>
@@ -295,14 +471,14 @@
                     <button id="pos-clear-cart-button" class="w-full btn btn-danger-red py-2.5 px-4">
                         Vaciar Carrito
                     </button>
-                     <button id="pos-checkout-button" class="w-full btn btn-primary-green py-2.5 px-4">
+                    <button id="pos-checkout-button" class="w-full btn btn-primary-green py-2.5 px-4">
                         Finalizar Venta
                     </button>
                 </div>
             </div>
         </section>
     </main>
-    
+
     <div id="message-modal" class="modal">
         <div class="modal-glass-content p-6 max-w-md w-full">
             <h3 id="message-modal-title" class="text-lg font-semibold mb-3 text-main">Mensaje</h3>
@@ -314,7 +490,7 @@
     </div>
 
     <div id="edit-fab-product-modal" class="modal">
-        <div class="modal-glass-content p-6 max-w-lg w-full"> 
+        <div class="modal-glass-content p-6 max-w-lg w-full">
             <h3 class="text-lg font-semibold mb-4 text-main">Modificar Producto Fabricado</h3>
             <input type="hidden" id="edit-fab-product-id">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -335,14 +511,14 @@
                     <button id="remove-edit-fab-image-button" class="ml-3 btn btn-danger-red px-2 py-1 text-xs hidden">Quitar</button>
                 </div>
             </div>
-             <hr class="my-4 border-[rgba(255,255,255,0.1)]">
+            <hr class="my-4 border-[rgba(255,255,255,0.1)]">
             <div>
                 <h4 class="text-md font-semibold mb-2 text-main">Agregar más Stock (Fabricar Lote Adicional)</h4>
                 <div class="mb-3">
                     <label for="add-stock-quantity" class="block text-sm font-medium text-label mb-1">Cantidad Adicional a Fabricar:</label>
                     <input type="number" id="add-stock-quantity" class="form-input-custom" placeholder="0" min="0">
                 </div>
-                 <div class="mb-3 card-glass p-3 border-none">
+                <div class="mb-3 card-glass p-3 border-none">
                     <label class="flex items-center space-x-2">
                         <input type="checkbox" id="add-stock-deduct-plastic-check" class="form-checkbox h-5 w-5 text-sky-500 bg-slate-700 border-slate-600 rounded focus:ring-sky-500">
                         <span class="text-sm text-label">Descontar plástico para este lote adicional</span>
@@ -371,7 +547,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="edit-plastic-stock-modal" class="modal">
         <div class="modal-glass-content p-6 max-w-sm w-full">
             <h3 class="text-lg font-semibold mb-4 text-main">Actualizar Stock de Plástico</h3>
@@ -405,7 +581,7 @@
         const plasticQuantityInput = document.getElementById('plastic-quantity');
         const addPlasticButton = document.getElementById('add-plastic-button');
         const plasticStockListDiv = document.getElementById('plastic-stock-list');
-        
+
         // Gestión de Productos Fabricados (Agregar)
         const fabProductNameInput = document.getElementById('fab-product-name');
         const fabProductPriceInput = document.getElementById('fab-product-price');
@@ -425,7 +601,7 @@
         const posCartTotalSpan = document.getElementById('pos-cart-total');
         const posClearCartButton = document.getElementById('pos-clear-cart-button');
         const posCheckoutButton = document.getElementById('pos-checkout-button');
-        
+
         // Opciones de Tienda/Feria
         const generateStoreSummaryButton = document.getElementById('generate-store-summary-button');
         const resetStoreSalesButton = document.getElementById('reset-store-sales-button');
@@ -462,10 +638,10 @@
         // Estado de la Aplicación
         let plastics = []; // { id, name, quantity (grams) }
         let products = []; // { id, name, price, stock, image, plasticCostPerUnit: { typeId, amount, name } (opcional) }
-        let cart = [];     // { ...productData, cartItemId (unique for this cart instance) }
+        let cart = []; // { ...productData, cartItemId (unique for this cart instance) }
         let totalSales = 0;
         let completedSales = []; // { id, items: [...cart], totalAmount, timestamp }
-        
+
         let currentFabProductImageBase64 = null;
         let editingFabProductImageBase64 = null;
 
@@ -492,26 +668,33 @@
             editingFabProductImageBase64 = val;
             removeEditFabImageButton.classList.toggle('hidden', !val);
         }));
-        
+
         removeEditFabImageButton.addEventListener('click', () => {
-            editFabProductImagePreview.src = ''; 
+            editFabProductImagePreview.src = '';
             editFabProductImagePreview.classList.add('hidden');
-            editFabProductImageInput.value = ''; 
-            editingFabProductImageBase64 = null; 
+            editFabProductImageInput.value = '';
+            editingFabProductImageBase64 = null;
             removeEditFabImageButton.classList.add('hidden');
         });
 
 
         // --- Funciones de Modales y Mensajes ---
-        function showModal(modalElement) { modalElement.classList.add('active'); }
+        function showModal(modalElement) {
+            modalElement.classList.add('active');
+        }
+
         function hideModal(modalElement) {
             modalElement.classList.remove('active');
             // Resetear campos de imagen y previews al cerrar modales
-            fabProductImagePreview.classList.add('hidden'); fabProductImagePreview.src = '';
-            fabProductImageInput.value = ''; currentFabProductImageBase64 = null;
-            
-            editFabProductImagePreview.classList.add('hidden'); editFabProductImagePreview.src = '';
-            editFabProductImageInput.value = ''; editingFabProductImageBase64 = null; 
+            fabProductImagePreview.classList.add('hidden');
+            fabProductImagePreview.src = '';
+            fabProductImageInput.value = '';
+            currentFabProductImageBase64 = null;
+
+            editFabProductImagePreview.classList.add('hidden');
+            editFabProductImagePreview.src = '';
+            editFabProductImageInput.value = '';
+            editingFabProductImageBase64 = null;
             removeEditFabImageButton.classList.add('hidden');
 
             // Resetear campos de "Agregar Stock" en modal de edición
@@ -521,10 +704,11 @@
             addStockPlasticTypeSelect.value = '';
             addStockPlasticGramsUnitInput.value = '';
         }
+
         function showMessage(title, textContent, isHtml = false) {
             messageModalTitle.textContent = title;
             if (isHtml) {
-                 messageModalText.innerHTML = textContent; // Directly set HTML content
+                messageModalText.innerHTML = textContent; // Directly set HTML content
             } else {
                 // For plain text, ensure it's wrapped in a <p> or similar for consistent styling if needed
                 messageModalText.innerHTML = `<p class="text-label">${textContent.replace(/\n/g, '<br>')}</p>`;
@@ -537,11 +721,11 @@
 
         // --- Lógica de Pestañas ---
         function setActiveTab(activeButton, activeContent) {
-            [tabInventarioButton, tabPosButton].forEach(b => { 
-                b.classList.remove('tab-active-text', 'tab-active-border'); 
+            [tabInventarioButton, tabPosButton].forEach(b => {
+                b.classList.remove('tab-active-text', 'tab-active-border');
                 b.classList.add('text-gray-400'); // Use a more descriptive class if needed from new style
             });
-            activeButton.classList.add('tab-active-text', 'tab-active-border'); 
+            activeButton.classList.add('tab-active-text', 'tab-active-border');
             activeButton.classList.remove('text-gray-400');
             [contentInventario, contentPos].forEach(c => c.classList.remove('active'));
             activeContent.classList.add('active');
@@ -558,7 +742,7 @@
                     const div = document.createElement('div');
                     // Applied .card-glass for consistency, but might be too much for small items.
                     // A simpler background or just text might be better. For now, keeping it simple.
-                    div.className = 'bg-[rgba(22,27,34,0.8)] p-3 rounded-lg shadow flex justify-between items-center'; 
+                    div.className = 'bg-[rgba(22,27,34,0.8)] p-3 rounded-lg shadow flex justify-between items-center';
                     div.innerHTML = `
                         <div>
                             <p class="font-medium text-main">${p.name}</p>
@@ -588,7 +772,11 @@
                 showMessage("Error", "Ya existe un plástico con ese nombre.");
                 return;
             }
-            plastics.push({ id: `plastic_${Date.now()}`, name, quantity });
+            plastics.push({
+                id: `plastic_${Date.now()}`,
+                name,
+                quantity
+            });
             savePlasticsToLocalStorage();
             renderPlasticStock();
             plasticNameInput.value = '';
@@ -606,7 +794,7 @@
                 showModal(editPlasticStockModal);
             }
         }
-        
+
         saveUpdatePlasticButton.addEventListener('click', () => {
             const plasticId = editPlasticIdInput.value;
             const newQuantity = parseInt(updatePlasticQuantityInput.value);
@@ -633,7 +821,7 @@
             if (window.confirm("¿Seguro que deseas eliminar este tipo de plástico? Esta acción no se puede deshacer.")) {
                 plastics = plastics.filter(p => p.id !== plasticId);
                 savePlasticsToLocalStorage();
-                renderPlasticStock(); 
+                renderPlasticStock();
                 showMessage("Plástico Eliminado", "El tipo de plástico ha sido eliminado.");
             }
         }
@@ -642,8 +830,8 @@
         function populatePlasticSelects() {
             const selects = [fabPlasticTypeSelect, addStockPlasticTypeSelect];
             selects.forEach(select => {
-                const currentValue = select.value; 
-                select.innerHTML = '<option value="" class="bg-slate-700">Seleccione un plástico...</option>'; 
+                const currentValue = select.value;
+                select.innerHTML = '<option value="" class="bg-slate-700">Seleccione un plástico...</option>';
                 plastics.forEach(p => {
                     const option = document.createElement('option');
                     option.value = p.id;
@@ -652,7 +840,7 @@
                     select.appendChild(option);
                 });
                 if (plastics.find(p => p.id === currentValue)) {
-                    select.value = currentValue; 
+                    select.value = currentValue;
                 }
             });
         }
@@ -692,41 +880,53 @@
                     showMessage("Error", `Stock insuficiente de ${selectedPlastic.name}. Necesita ${totalPlasticNeeded}g, disponibles ${selectedPlastic.quantity}g.`);
                     return;
                 }
-                plasticCostPerUnit = { typeId: plasticTypeId, amount: gramsPerUnit, name: selectedPlastic.name };
+                plasticCostPerUnit = {
+                    typeId: plasticTypeId,
+                    amount: gramsPerUnit,
+                    name: selectedPlastic.name
+                };
             }
 
             if (selectedPlastic && totalPlasticNeeded > 0) {
                 selectedPlastic.quantity -= totalPlasticNeeded;
-                savePlasticsToLocalStorage(); 
+                savePlasticsToLocalStorage();
             }
-            
+
             const existingProduct = products.find(p => p.name.toLowerCase() === name.toLowerCase());
-            if (existingProduct) { 
+            if (existingProduct) {
                 existingProduct.stock += quantityManufactured;
-                 if (plasticCostPerUnit) { 
+                if (plasticCostPerUnit) {
                     existingProduct.plasticCostPerUnit = plasticCostPerUnit;
                 }
-                if (currentFabProductImageBase64 !== null) { 
+                if (currentFabProductImageBase64 !== null) {
                     existingProduct.image = currentFabProductImageBase64;
                 }
-            } else { 
-                 products.push({
-                    id: `prod_${Date.now()}`, name, price, 
-                    stock: quantityManufactured, 
+            } else {
+                products.push({
+                    id: `prod_${Date.now()}`,
+                    name,
+                    price,
+                    stock: quantityManufactured,
                     image: currentFabProductImageBase64,
-                    plasticCostPerUnit 
+                    plasticCostPerUnit
                 });
             }
 
-            saveProductsToLocalStorage(); 
-            renderAll(); 
+            saveProductsToLocalStorage();
+            renderAll();
 
             showMessage("Éxito", `Producto "${name}" (${quantityManufactured} uds) agregado/actualizado en inventario.`);
-            fabProductNameInput.value = ''; fabProductPriceInput.value = ''; fabProductQuantityInput.value = '';
-            fabProductImageInput.value = ''; fabProductImagePreview.classList.add('hidden'); fabProductImagePreview.src = '';
+            fabProductNameInput.value = '';
+            fabProductPriceInput.value = '';
+            fabProductQuantityInput.value = '';
+            fabProductImageInput.value = '';
+            fabProductImagePreview.classList.add('hidden');
+            fabProductImagePreview.src = '';
             currentFabProductImageBase64 = null;
-            fabDeductPlasticCheck.checked = false; fabPlasticDetailsDiv.classList.add('hidden');
-            fabPlasticTypeSelect.value = ''; fabPlasticGramsUnitInput.value = '';
+            fabDeductPlasticCheck.checked = false;
+            fabPlasticDetailsDiv.classList.add('hidden');
+            fabPlasticTypeSelect.value = '';
+            fabPlasticGramsUnitInput.value = '';
         }
         addFabProductButton.addEventListener('click', addFabProduct);
 
@@ -765,16 +965,16 @@
             document.querySelectorAll('.edit-fab-product-button').forEach(btn => btn.addEventListener('click', (e) => openEditFabProductModal(e.target.dataset.id)));
             document.querySelectorAll('.delete-fab-product-button').forEach(btn => btn.addEventListener('click', (e) => deleteFabProduct(e.target.dataset.id)));
         }
-        
+
         function openEditFabProductModal(productId) {
             const product = products.find(p => p.id === productId);
             if (product) {
                 editFabProductIdInput.value = product.id;
                 editFabProductNameInput.value = product.name;
                 editFabProductPriceInput.value = product.price.toFixed(2);
-                addStockQuantityInput.value = "0"; 
+                addStockQuantityInput.value = "0";
 
-                editingFabProductImageBase64 = product.image || null; 
+                editingFabProductImageBase64 = product.image || null;
                 if (product.image) {
                     editFabProductImagePreview.src = product.image;
                     editFabProductImagePreview.classList.remove('hidden');
@@ -784,12 +984,12 @@
                     editFabProductImagePreview.classList.add('hidden');
                     removeEditFabImageButton.classList.add('hidden');
                 }
-                editFabProductImageInput.value = ''; 
+                editFabProductImageInput.value = '';
 
                 addStockDeductPlasticCheck.checked = false;
                 addStockPlasticDetailsDiv.classList.add('hidden');
-                addStockPlasticTypeSelect.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.typeId : ''; 
-                addStockPlasticGramsUnitInput.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.amount : ''; 
+                addStockPlasticTypeSelect.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.typeId : '';
+                addStockPlasticGramsUnitInput.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.amount : '';
 
                 showModal(editFabProductModal);
             }
@@ -807,8 +1007,8 @@
             const newPrice = parseFloat(editFabProductPriceInput.value);
 
             if (!newName || isNaN(newPrice) || newPrice < 0) {
-                 showMessage("Error", "Nombre y precio válido son requeridos.");
-                 return;
+                showMessage("Error", "Nombre y precio válido son requeridos.");
+                return;
             }
             product.name = newName;
             product.price = newPrice;
@@ -817,8 +1017,8 @@
 
             const additionalQuantity = parseInt(addStockQuantityInput.value);
             if (isNaN(additionalQuantity) || additionalQuantity < 0) {
-                 showMessage("Error", "Cantidad adicional a fabricar debe ser un número no negativo.");
-                 return;
+                showMessage("Error", "Cantidad adicional a fabricar debe ser un número no negativo.");
+                return;
             }
 
             let modifiedPlasticStock = false;
@@ -845,7 +1045,11 @@
                         showMessage("Error", `Stock insuficiente de ${selectedPlasticForNewBatch.name} para el nuevo lote. Necesita ${totalPlasticForNewBatch}g, disponibles ${selectedPlasticForNewBatch.quantity}g.`);
                         return;
                     }
-                    plasticCostForNewBatch = { typeId: plasticTypeId, amount: gramsPerUnit, name: selectedPlasticForNewBatch.name };
+                    plasticCostForNewBatch = {
+                        typeId: plasticTypeId,
+                        amount: gramsPerUnit,
+                        name: selectedPlasticForNewBatch.name
+                    };
                 }
 
                 if (selectedPlasticForNewBatch && totalPlasticForNewBatch > 0) {
@@ -854,13 +1058,13 @@
                 }
                 product.stock += additionalQuantity;
                 if (plasticCostForNewBatch) {
-                     product.plasticCostPerUnit = plasticCostForNewBatch;
+                    product.plasticCostPerUnit = plasticCostForNewBatch;
                 }
             }
-            
+
             saveProductsToLocalStorage();
-            if (modifiedPlasticStock) savePlasticsToLocalStorage(); 
-            
+            if (modifiedPlasticStock) savePlasticsToLocalStorage();
+
             renderAll();
             hideModal(editFabProductModal);
             showMessage("Éxito", `Producto "${product.name}" actualizado. Stock total: ${product.stock}.`);
@@ -905,11 +1109,13 @@
         function addProductToCartPOS(productId) {
             const product = products.find(p => p.id === productId);
             if (product && product.stock > 0) {
-                cart.push({ ...product, cartItemId: `cart_${Date.now()}_${Math.random().toString(36).substr(2,5)}` });
-                product.stock--; 
+                cart.push({...product,
+                    cartItemId: `cart_${Date.now()}_${Math.random().toString(36).substr(2,5)}`
+                });
+                product.stock--;
                 saveProductsToLocalStorage();
                 renderCartPOS();
-                renderProductsForSalePOS(); 
+                renderProductsForSalePOS();
             }
         }
 
@@ -917,14 +1123,14 @@
             const cartItemIndex = cart.findIndex(item => item.cartItemId === cartItemId);
             if (cartItemIndex > -1) {
                 const removedItem = cart[cartItemIndex];
-                const productInInventory = products.find(p => p.id === removedItem.id); 
+                const productInInventory = products.find(p => p.id === removedItem.id);
                 if (productInInventory) {
-                    productInInventory.stock++; 
+                    productInInventory.stock++;
                     saveProductsToLocalStorage();
                 }
                 cart.splice(cartItemIndex, 1);
                 renderCartPOS();
-                renderProductsForSalePOS(); 
+                renderProductsForSalePOS();
             }
         }
 
@@ -949,19 +1155,19 @@
                 });
             }
             posCartTotalSpan.textContent = `ARS ${currentTotal.toFixed(2)}`;
-             posCartTotalSpan.className = currentTotal > 0 ? 'text-green-400' : 'text-slate-400'; // Dynamic color for total
+            posCartTotalSpan.className = currentTotal > 0 ? 'text-green-400' : 'text-slate-400'; // Dynamic color for total
             document.querySelectorAll('.pos-remove-from-cart-button').forEach(btn => btn.addEventListener('click', (e) => removeProductFromCartPOS(e.target.dataset.cartItemId)));
         }
-        
+
         posClearCartButton.addEventListener('click', () => {
             if (cart.length > 0) {
-                cart.forEach(cartItem => { 
+                cart.forEach(cartItem => {
                     const productInInventory = products.find(p => p.id === cartItem.id);
                     if (productInInventory) productInInventory.stock++;
                 });
                 cart = [];
                 saveProductsToLocalStorage();
-                renderAll(); 
+                renderAll();
                 showMessage("Carrito Vacío", "El carrito ha sido vaciado y el stock restaurado.");
             }
         });
@@ -973,35 +1179,45 @@
             }
             const saleAmount = cart.reduce((sum, item) => sum + item.price, 0);
             totalSales += saleAmount;
-            completedSales.push({ id: `storeSale_${Date.now()}`, items: [...cart], totalAmount: saleAmount, timestamp: new Date().toISOString() });
-            
+            completedSales.push({
+                id: `storeSale_${Date.now()}`,
+                items: [...cart],
+                totalAmount: saleAmount,
+                timestamp: new Date().toISOString()
+            });
+
             saveTotalSalesToLocalStorage();
             saveCompletedSalesToLocalStorage();
-            
+
             showMessage("Venta Finalizada", `Venta de ARS ${saleAmount.toFixed(2)} completada. Total del día: ARS ${totalSales.toFixed(2)}.`);
             cart = [];
-            renderAll(); 
+            renderAll();
         });
 
         // --- Opciones de Tienda (Resumen, Reinicio) ---
         resetStoreSalesButton.addEventListener('click', () => {
             if (window.confirm("¿Empezar un nuevo día de caja? Se borrará el total y detalle de ventas, y se vaciará el carrito actual. El inventario de productos y plásticos no se modificará.")) {
-                totalSales = 0; 
+                totalSales = 0;
                 completedSales = [];
-                localStorage.removeItem('posTotalSales'); 
+                localStorage.removeItem('posTotalSales');
                 localStorage.removeItem('posCompletedSales');
-                cart = []; 
+                cart = [];
                 renderAll();
                 showMessage('Nuevo Día Iniciado', 'Los contadores de ventas y el carrito han sido reiniciados. El stock de productos se mantiene.');
             }
         });
         generateStoreSummaryButton.addEventListener('click', () => {
             if (completedSales.length === 0) {
-                showMessage('Resumen de Ventas', 'No hay ventas registradas para este período.'); return;
+                showMessage('Resumen de Ventas', 'No hay ventas registradas para este período.');
+                return;
             }
             const productSummary = {};
             completedSales.forEach(sale => sale.items.forEach(item => {
-                productSummary[item.id] = productSummary[item.id] || { name: item.name, quantity: 0, totalRevenue: 0 };
+                productSummary[item.id] = productSummary[item.id] || {
+                    name: item.name,
+                    quantity: 0,
+                    totalRevenue: 0
+                };
                 productSummary[item.id].quantity++;
                 productSummary[item.id].totalRevenue += item.price;
             }));
@@ -1013,12 +1229,13 @@
             summaryText += `</pre>`;
             showMessage('Resumen de Ventas', summaryText, true);
         });
-        
+
 
         // --- LocalStorage Functions ---
         function savePlasticsToLocalStorage() {
             localStorage.setItem('posPlastics', JSON.stringify(plastics));
         }
+
         function loadPlasticsFromLocalStorage() {
             const storedPlastics = localStorage.getItem('posPlastics');
             plastics = storedPlastics ? JSON.parse(storedPlastics) : [];
@@ -1027,6 +1244,7 @@
         function saveProductsToLocalStorage() {
             localStorage.setItem('posProducts', JSON.stringify(products));
         }
+
         function loadProductsFromLocalStorage() {
             const storedProducts = localStorage.getItem('posProducts');
             products = storedProducts ? JSON.parse(storedProducts) : [];
@@ -1035,6 +1253,7 @@
         function saveTotalSalesToLocalStorage() {
             localStorage.setItem('posTotalSales', JSON.stringify(totalSales));
         }
+
         function loadTotalSalesFromLocalStorage() {
             const storedSales = localStorage.getItem('posTotalSales');
             totalSales = storedSales ? JSON.parse(storedSales) : 0;
@@ -1043,11 +1262,12 @@
         function saveCompletedSalesToLocalStorage() {
             localStorage.setItem('posCompletedSales', JSON.stringify(completedSales));
         }
+
         function loadCompletedSalesFromLocalStorage() {
             const storedCompletedSales = localStorage.getItem('posCompletedSales');
             completedSales = storedCompletedSales ? JSON.parse(storedCompletedSales) : [];
         }
-        
+
         function renderTotalSales() { /* Placeholder, total sales shown in summary */ }
 
         // --- Inicialización y Renderizado Global ---
@@ -1056,7 +1276,7 @@
             renderFabProductList();
             renderProductsForSalePOS();
             renderCartPOS();
-            renderTotalSales(); 
+            renderTotalSales();
         }
 
         function initializeApp() {
@@ -1064,7 +1284,7 @@
             loadProductsFromLocalStorage();
             loadTotalSalesFromLocalStorage();
             loadCompletedSalesFromLocalStorage();
-            
+
             // Set initial active tab based on localStorage or default to 'tab-inventario'
             const activeTabId = localStorage.getItem('activeStoreTab') || 'tab-inventario';
             const buttonToActivate = document.getElementById(activeTabId) || tabInventarioButton;
@@ -1073,15 +1293,16 @@
 
             renderAll(); // Render all components after setting the active tab
         }
-        
+
         // Event Listeners para Pestañas
         tabInventarioButton.addEventListener('click', () => setActiveTab(tabInventarioButton, contentInventario));
-        tabPosButton.addEventListener('click', () => { 
-            setActiveTab(tabPosButton, contentPos); 
+        tabPosButton.addEventListener('click', () => {
+            setActiveTab(tabPosButton, contentPos);
             renderProductsForSalePOS(); // Ensure POS products are rendered when tab becomes active
         });
 
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
+
 </html>
