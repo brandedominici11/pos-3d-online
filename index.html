@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,278 +9,189 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #111827;
-            /* bg-gray-900 */
-            color: #d1d5db;
-            /* text-gray-300 */
+            background-color: #0D1117; /* Base background - Very dark blue/gray */
+            color: #c9d1d9; /* Default light text color */
+            padding-top: 60px; /* Adjust if header height changes */
         }
-        
-        .tab-content {
-            display: none;
+
+        /* Glassmorphism effect for cards and modals */
+        .card-glass, .modal-glass-content {
+            background-color: rgba(30, 37, 50, 0.6); /* Semi-transparent dark slate with more opacity */
+            backdrop-filter: blur(10px) saturate(180%);
+            -webkit-backdrop-filter: blur(10px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1rem; /* rounded-xl */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
         }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .card-bg {
-            background-color: #1f2937;
-            /* bg-gray-800 */
-        }
-        
-        .text-main {
-            color: #f3f4f6;
-            /* text-gray-100 */
-        }
-        
-        .text-secondary {
-            color: #9ca3af;
-            /* text-gray-400 */
-        }
-        
-        .text-label {
-            color: #cbd5e1;
-            /* text-slate-300 */
-        }
-        
-        .form-input-custom,
-        .form-select-custom,
-        .form-file-custom {
-            background-color: #374151;
-            /* bg-gray-700 */
-            border-color: #4b5563;
-            /* border-gray-600 */
-            color: #f3f4f6;
-            /* text-gray-100 */
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Text Colors */
+        .text-main { color: #e6edf3; /* Brighter white/light gray for main text */ }
+        .text-secondary { color: #7d8590; /* Softer gray for secondary text */ }
+        .text-label { color: #afb8c1; /* Light gray for labels */ }
+
+        /* Form Elements Styling */
+        .form-input-custom, .form-select-custom, .form-file-custom {
+            background-color: rgba(13, 17, 23, 0.5); /* Darker, slightly transparent input background */
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #e6edf3;
             border-width: 1px;
-            border-radius: 0.375rem;
-            /* rounded-md */
-            padding: 0.5rem 0.75rem;
-            /* p-2 px-3 */
+            border-radius: 0.5rem; /* rounded-lg */
+            padding: 0.625rem 0.875rem; /* p-2.5 px-3.5 */
             width: 100%;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
-        
-        .form-input-custom::placeholder {
-            color: #6b7280;
-        }
-        
-        .form-input-custom:focus,
-        .form-select-custom:focus,
-        .form-file-custom:focus {
-            --tw-ring-color: #2563eb;
-            /* ring-blue-600 */
-            border-color: #2563eb;
-            /* border-blue-600 */
-            outline: 2px solid transparent;
-            outline-offset: 2px;
-        }
-        
-        .form-file-custom::-webkit-file-upload-button {
-            visibility: hidden;
-        }
-        
-        .form-file-custom::before {
-            content: 'Seleccionar archivo';
-            display: inline-block;
-            background: #4b5563;
-            border: 1px solid #6b7280;
-            border-radius: 0.25rem;
-            padding: 0.25rem 0.5rem;
+        .form-input-custom::placeholder { color: #7d8590; }
+        .form-input-custom:focus, .form-select-custom:focus, .form-file-custom:focus {
+            border-color: #58a6ff; /* Accent blue for focus */
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
             outline: none;
-            white-space: nowrap;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.875rem;
-            color: #e5e7eb;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
         }
+
+        /* Custom file input button styling */
+        .form-file-custom::-webkit-file-upload-button { visibility: hidden; }
+        .form-file-custom::before {
+            content: 'Seleccionar archivo'; display: inline-block; 
+            background: rgba(88, 166, 255, 0.2); /* Accent blue, transparent */
+            border: 1px solid rgba(88, 166, 255, 0.5); 
+            border-radius: 0.375rem; /* rounded-md */
+            padding: 0.375rem 0.75rem; /* py-1.5 px-3 */
+            outline: none; white-space: nowrap; cursor: pointer; font-weight: 500;
+            font-size: 0.875rem; color: #58a6ff;
+            transition: background-color 0.2s ease;
+        }
+        .form-file-custom:hover::before { background-color: rgba(88, 166, 255, 0.3); }
         
-        .form-file-custom:hover::before {
-            background-color: #6b7280;
-        }
-        
-        .disabled-product {
-            background-color: #4b5563 !important;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        
-        .disabled-product:hover {
-            background-color: #4b5563 !important;
-        }
-        
-        .modal {
-            display: none;
-        }
-        
-        .modal.active {
-            display: flex;
-        }
-        
-        .modal-content-bg {
-            background-color: #1f2937;
-        }
+        /* Disabled Product Styling (remains for functionality) */
+        .disabled-product { background-color: #4b5563 !important; cursor: not-allowed; opacity: 0.6; }
+        .disabled-product:hover { background-color: #4b5563 !important; }
+
+        /* Modal Styling */
+        .modal { display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
+        .modal.active { display: flex; }
+        /* .modal-content-bg is replaced by .modal-glass-content */
         
         #message-modal-text pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            max-height: 60vh;
-            overflow-y: auto;
-            text-align: left;
-            background-color: #374151;
-            color: #e5e7eb;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid #4b5563;
+            white-space: pre-wrap; word-wrap: break-word; max-height: 60vh; 
+            overflow-y: auto; text-align: left; 
+            background-color: rgba(13, 17, 23, 0.7); /* Darker background for pre */
+            color: #e6edf3; padding: 1rem; border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid rgba(255, 255, 255, 0.1); 
         }
+
+        /* Header and Nav Styling */
+        .header-bg { 
+            background-color: rgba(13, 17, 23, 0.7); /* Dark, slightly transparent header */
+            backdrop-filter: blur(8px) saturate(150%);
+            -webkit-backdrop-filter: blur(8px) saturate(150%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: fixed; /* Fixed header */
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 20; /* Ensure header is above body content but below modals */
+        }
+        .nav-bg { 
+            background-color: transparent; /* Nav background integrated with header or main content area */
+            /* Tabs will be styled directly */
+        }
+        .tab-button {
+            color: #7d8590; /* Default tab text color */
+            border-bottom-width: 2px;
+            border-color: transparent;
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+        .tab-button:hover {
+            color: #58a6ff; /* Accent blue on hover */
+        }
+        .tab-active-border { border-color: #58a6ff; /* Accent blue for active tab border */ }
+        .tab-active-text { color: #58a6ff; /* Accent blue for active tab text */ font-weight: 600; }
+
+        /* Button Styling (Modernized) */
+        .btn {
+            padding: 0.625rem 1.25rem; /* py-2.5 px-5 */
+            border-radius: 0.5rem; /* rounded-lg */
+            font-weight: 600; /* semibold */
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid transparent;
+        }
+        .btn:active { transform: translateY(1px); }
+
+        .btn-primary-green { background-color: #238636; color: white; border-color: #2ea043; }
+        .btn-primary-green:hover { background-color: #2ea043; }
         
-        .header-bg {
-            background-color: #1e40af;
+        .btn-secondary-blue { background-color: #388bfd; color: white; border-color: #58a6ff;}
+        .btn-secondary-blue:hover { background-color: #58a6ff; }
+
+        .btn-accent-teal { background-color: #238669; color: white; border-color: #2ea083;}
+        .btn-accent-teal:hover { background-color: #2ea083; }
+
+        .btn-warning-orange { background-color: #c9510c; color: white; border-color: #f57831;}
+        .btn-warning-orange:hover { background-color: #e16f23; }
+
+        .btn-danger-red { background-color: #da3633; color: white; border-color: #f85149;}
+        .btn-danger-red:hover { background-color: #f85149; }
+
+        .btn-neutral-gray { background-color: #21262d; color: #e6edf3; border-color: #30363d;}
+        .btn-neutral-gray:hover { background-color: #30363d; }
+
+        /* Product Image Styling */
+        .product-image-preview { 
+            width: 60px; height: 60px; object-fit: cover; 
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            background-color: rgba(13, 17, 23, 0.5);
         }
-        
-        .nav-bg {
-            background-color: #374151;
+        .product-image-sales { 
+            width: 100%; height: 100px; /* Increased height for better visual */
+            object-fit: cover; 
+            border-radius: 0.75rem 0.75rem 0 0; /* rounded-xl top */
         }
-        
-        .tab-active-border {
-            border-color: #3b82f6;
+        .product-image-placeholder, .product-image-sales-placeholder {
+            display: flex; align-items: center; justify-content: center;
+            background-color: rgba(13, 17, 23, 0.5);
+            color: #7d8590; font-size: 0.875rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .tab-active-text {
-            color: #60a5fa;
+        .product-image-placeholder { width: 60px; height: 60px; border-radius: 0.5rem; /* rounded-lg */ }
+        .product-image-sales-placeholder { width: 100%; height: 100px; border-radius: 0.75rem 0.75rem 0 0; /* rounded-xl top */ }
+
+        /* POS product card styling */
+        #pos-product-list button {
+             /* Uses .card-glass for base, additional styling if needed */
+            text-align: center;
         }
-        
-        .btn-primary-green {
-            background-color: #10b981;
-            color: white;
+        #pos-product-list button .p-2 { /* Ensure padding for text content in POS product cards */
+            padding: 0.75rem; /* p-3 */
         }
-        
-        .btn-primary-green:hover {
-            background-color: #059669;
-        }
-        
-        .btn-primary-green:active {
-            background-color: #047857;
-        }
-        
-        .btn-secondary-blue {
-            background-color: #3b82f6;
-            color: white;
-        }
-        
-        .btn-secondary-blue:hover {
-            background-color: #2563eb;
-        }
-        
-        .btn-secondary-blue:active {
-            background-color: #1d4ed8;
-        }
-        
-        .btn-accent-teal {
-            background-color: #14b8a6;
-            color: white;
-        }
-        /* Teal for plastic actions */
-        
-        .btn-accent-teal:hover {
-            background-color: #0d9488;
-        }
-        
-        .btn-warning-orange {
-            background-color: #f97316;
-            color: white;
-        }
-        
-        .btn-warning-orange:hover {
-            background-color: #ea580c;
-        }
-        
-        .btn-danger-red {
-            background-color: #ef4444;
-            color: white;
-        }
-        
-        .btn-danger-red:hover {
-            background-color: #dc2626;
-        }
-        
-        .btn-neutral-gray {
-            background-color: #4b5563;
-            color: #e5e7eb;
-        }
-        
-        .btn-neutral-gray:hover {
-            background-color: #6b7280;
-        }
-        
-        .product-image-preview {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 0.375rem;
-            border: 1px solid #4b5563;
-            background-color: #374151;
-        }
-        
-        .product-image-sales {
-            width: 100%;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 0.375rem 0.375rem 0 0;
-        }
-        
-        .product-image-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            background-color: #374151;
-            border-radius: 0.375rem;
-            color: #9ca3af;
-            font-size: 0.75rem;
-            border: 1px solid #4b5563;
-        }
-        
-        .product-image-sales-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 80px;
-            background-color: #374151;
-            border-radius: 0.375rem 0.375rem 0 0;
-            color: #9ca3af;
-            font-size: 0.875rem;
-        }
+        #pos-product-list button .text-sm { font-size: 0.875rem; }
+        #pos-product-list button .text-xs { font-size: 0.75rem; }
+
     </style>
 </head>
-
 <body class="min-h-screen flex flex-col">
 
     <header class="header-bg text-white p-4 shadow-lg">
-        <h1 class="text-2xl font-bold text-center">Sistema de Gestión Tienda 3D</h1>
+        <h1 class="text-2xl font-bold text-center text-main">Sistema de Gestión Tienda 3D</h1>
     </header>
 
-    <nav class="nav-bg shadow-md sticky top-0 z-10">
-        <div class="max-w-xl mx-auto flex">
-            <button id="tab-inventario" class="tab-button flex-1 py-3 px-2 text-center font-semibold tab-active-text tab-active-border border-b-2 hover:bg-gray-600 transition-colors">
+    <nav class="nav-bg shadow-md fixed top-[60px] left-0 right-0 z-10"> <div class="max-w-xl mx-auto flex">
+            <button id="tab-inventario" class="tab-button flex-1 py-3 px-2 text-center font-semibold">
                 Gestión de Inventario
             </button>
-            <button id="tab-pos" class="tab-button flex-1 py-3 px-2 text-center font-semibold text-gray-400 hover:bg-gray-600 transition-colors">
+            <button id="tab-pos" class="tab-button flex-1 py-3 px-2 text-center font-semibold">
                 Punto de Venta (POS)
             </button>
         </div>
     </nav>
 
-    <main class="flex-grow p-4 max-w-xl mx-auto w-full">
-        <section id="content-inventario" class="tab-content active space-y-6">
+    <main class="flex-grow p-4 max-w-xl mx-auto w-full mt-16"> <section id="content-inventario" class="tab-content active space-y-6">
             <div>
                 <h2 class="text-xl font-semibold mb-3 text-main">Materia Prima: Plástico</h2>
-                <div class="card-bg p-4 rounded-lg shadow-xl">
+                <div class="card-glass p-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label for="plastic-name" class="block text-sm font-medium text-label mb-1">Nombre del Plástico (ej: PLA Rojo):</label>
@@ -292,12 +202,12 @@
                             <input type="number" id="plastic-quantity" class="form-input-custom" placeholder="1000" min="0">
                         </div>
                     </div>
-                    <button id="add-plastic-button" class="w-full btn-accent-teal font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                    <button id="add-plastic-button" class="w-full btn btn-accent-teal py-2.5 px-4">
                         Agregar Tipo de Plástico
                     </button>
-
+                    
                     <h3 class="text-lg font-semibold mt-6 mb-3 text-main">Stock de Plásticos</h3>
-                    <div id="plastic-stock-list" class="space-y-2">
+                    <div id="plastic-stock-list" class="space-y-3">
                         <p class="text-secondary text-sm">No hay plásticos registrados.</p>
                     </div>
                 </div>
@@ -305,7 +215,7 @@
 
             <div>
                 <h2 class="text-xl font-semibold mb-3 text-main">Productos Fabricados</h2>
-                <div class="card-bg p-4 rounded-lg shadow-xl">
+                <div class="card-glass p-4">
                     <h3 class="text-lg font-semibold mb-3 text-main">Agregar Nuevo Producto Fabricado</h3>
                     <div class="mb-3">
                         <label for="fab-product-name" class="block text-sm font-medium text-label mb-1">Nombre del Producto:</label>
@@ -326,12 +236,11 @@
                         <input type="file" id="fab-product-image-input" class="form-file-custom" accept="image/*">
                         <img id="fab-product-image-preview" class="mt-2 product-image-preview hidden" alt="Vista previa">
                     </div>
-                    <div class="mb-3 p-3 border border-gray-700 rounded-md">
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" id="fab-deduct-plastic-check" class="form-checkbox h-5 w-5 text-blue-500 bg-gray-600 border-gray-500 rounded focus:ring-blue-400">
+                    <div class="mb-3 card-glass p-3 border-none"> <label class="flex items-center space-x-2">
+                            <input type="checkbox" id="fab-deduct-plastic-check" class="form-checkbox h-5 w-5 text-sky-500 bg-slate-700 border-slate-600 rounded focus:ring-sky-500">
                             <span class="text-sm text-label">Descontar plástico de materia prima para este lote</span>
                         </label>
-                        <div id="fab-plastic-details" class="mt-2 space-y-2 hidden">
+                        <div id="fab-plastic-details" class="mt-3 space-y-3 hidden">
                             <div>
                                 <label for="fab-plastic-type-select" class="block text-xs font-medium text-label mb-1">Tipo de Plástico Usado:</label>
                                 <select id="fab-plastic-type-select" class="form-select-custom">
@@ -344,7 +253,7 @@
                             </div>
                         </div>
                     </div>
-                    <button id="add-fab-product-button" class="w-full btn-primary-green font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                    <button id="add-fab-product-button" class="w-full btn btn-primary-green py-2.5 px-4">
                         Agregar Producto al Inventario
                     </button>
 
@@ -354,56 +263,58 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-6 card-bg p-4 rounded-lg shadow-xl space-y-3">
-                <h3 class="text-lg font-semibold mb-2 text-main">Opciones Generales de Tienda</h3>
-                <button id="generate-store-summary-button" class="w-full btn-secondary-blue font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+             <div class="mt-6 card-glass p-4 space-y-3">
+                 <h3 class="text-lg font-semibold mb-2 text-main">Opciones Generales de Tienda</h3>
+                <button id="generate-store-summary-button" class="w-full btn btn-secondary-blue py-2.5 px-4">
                     Generar Resumen de Ventas del Día
                 </button>
-                <button id="reset-store-sales-button" class="w-full btn-warning-orange font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                <button id="reset-store-sales-button" class="w-full btn btn-warning-orange py-2.5 px-4">
                     Empezar un Nuevo Día
                 </button>
             </div>
         </section>
 
-        <section id="content-pos" class="tab-content">
-            <h2 class="text-xl font-semibold mb-4 text-main">Seleccionar Productos para Vender</h2>
-            <div id="pos-product-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
+        <section id="content-pos" class="tab-content space-y-6">
+             <h2 class="text-xl font-semibold mb-4 text-main">Seleccionar Productos para Vender</h2>
+            <div id="pos-product-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
                 <p class="text-secondary text-sm col-span-full">No hay productos disponibles para la venta.</p>
             </div>
 
             <h3 class="text-lg font-semibold mb-3 text-main">Carrito de Compras</h3>
-            <div class="card-bg p-4 rounded-lg shadow-xl">
+            <div class="card-glass p-4">
                 <div id="pos-cart-items" class="space-y-2 mb-3 min-h-[40px]">
                     <p class="text-secondary text-sm">El carrito está vacío.</p>
                 </div>
-                <div class="border-t border-gray-700 pt-3">
+                <div class="border-t border-[rgba(255,255,255,0.1)] pt-3">
                     <div class="flex justify-between items-center font-bold text-lg text-main">
                         <span>Total:</span>
                         <span id="pos-cart-total" class="text-green-400">ARS 0.00</span>
                     </div>
                 </div>
-                <button id="pos-clear-cart-button" class="mt-4 w-full btn-danger-red font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
-                    Vaciar Carrito
-                </button>
-                <button id="pos-checkout-button" class="mt-2 w-full btn-primary-green font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
-                    Finalizar Venta
-                </button>
+                <div class="mt-4 space-y-2">
+                    <button id="pos-clear-cart-button" class="w-full btn btn-danger-red py-2.5 px-4">
+                        Vaciar Carrito
+                    </button>
+                     <button id="pos-checkout-button" class="w-full btn btn-primary-green py-2.5 px-4">
+                        Finalizar Venta
+                    </button>
+                </div>
             </div>
         </section>
     </main>
-
-    <div id="message-modal" class="modal fixed inset-0 bg-black bg-opacity-75 items-center justify-center p-4 z-50">
-        <div class="modal-content-bg p-6 rounded-lg shadow-xl max-w-md w-full">
+    
+    <div id="message-modal" class="modal">
+        <div class="modal-glass-content p-6 max-w-md w-full">
             <h3 id="message-modal-title" class="text-lg font-semibold mb-3 text-main">Mensaje</h3>
-            <div id="message-modal-text" class="text-sm text-secondary mb-4"></div>
-            <button id="message-modal-close" class="w-full btn-secondary-blue font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+            <div id="message-modal-text" class="text-sm text-label mb-4"></div>
+            <button id="message-modal-close" class="w-full btn btn-secondary-blue py-2 px-4">
                 Entendido
             </button>
         </div>
     </div>
 
-    <div id="edit-fab-product-modal" class="modal fixed inset-0 bg-black bg-opacity-75 items-center justify-center p-4 z-50">
-        <div class="modal-content-bg p-6 rounded-lg shadow-xl max-w-lg w-full">
+    <div id="edit-fab-product-modal" class="modal">
+        <div class="modal-glass-content p-6 max-w-lg w-full"> 
             <h3 class="text-lg font-semibold mb-4 text-main">Modificar Producto Fabricado</h3>
             <input type="hidden" id="edit-fab-product-id">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -421,22 +332,22 @@
                 <input type="file" id="edit-fab-product-image-input" class="form-file-custom" accept="image/*">
                 <div class="flex items-center mt-2">
                     <img id="edit-fab-product-image-preview" class="product-image-preview" alt="Imagen actual">
-                    <button id="remove-edit-fab-image-button" class="ml-2 text-xs btn-danger-red px-2 py-1 rounded-md hidden">Quitar</button>
+                    <button id="remove-edit-fab-image-button" class="ml-3 btn btn-danger-red px-2 py-1 text-xs hidden">Quitar</button>
                 </div>
             </div>
-            <hr class="my-4 border-gray-700">
+             <hr class="my-4 border-[rgba(255,255,255,0.1)]">
             <div>
                 <h4 class="text-md font-semibold mb-2 text-main">Agregar más Stock (Fabricar Lote Adicional)</h4>
                 <div class="mb-3">
                     <label for="add-stock-quantity" class="block text-sm font-medium text-label mb-1">Cantidad Adicional a Fabricar:</label>
                     <input type="number" id="add-stock-quantity" class="form-input-custom" placeholder="0" min="0">
                 </div>
-                <div class="mb-3 p-3 border border-gray-700 rounded-md">
+                 <div class="mb-3 card-glass p-3 border-none">
                     <label class="flex items-center space-x-2">
-                        <input type="checkbox" id="add-stock-deduct-plastic-check" class="form-checkbox h-5 w-5 text-blue-500 bg-gray-600 border-gray-500 rounded focus:ring-blue-400">
+                        <input type="checkbox" id="add-stock-deduct-plastic-check" class="form-checkbox h-5 w-5 text-sky-500 bg-slate-700 border-slate-600 rounded focus:ring-sky-500">
                         <span class="text-sm text-label">Descontar plástico para este lote adicional</span>
                     </label>
-                    <div id="add-stock-plastic-details" class="mt-2 space-y-2 hidden">
+                    <div id="add-stock-plastic-details" class="mt-3 space-y-3 hidden">
                         <div>
                             <label for="add-stock-plastic-type-select" class="block text-xs font-medium text-label mb-1">Tipo de Plástico Usado:</label>
                             <select id="add-stock-plastic-type-select" class="form-select-custom">
@@ -451,30 +362,30 @@
                 </div>
             </div>
             <div class="flex justify-end space-x-3 mt-6">
-                <button id="cancel-edit-fab-button" class="btn-neutral-gray font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                <button id="cancel-edit-fab-button" class="btn btn-neutral-gray py-2 px-4">
                     Cancelar
                 </button>
-                <button id="save-edit-fab-button" class="btn-primary-green font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                <button id="save-edit-fab-button" class="btn btn-primary-green py-2 px-4">
                     Guardar Cambios y/o Agregar Stock
                 </button>
             </div>
         </div>
     </div>
-
-    <div id="edit-plastic-stock-modal" class="modal fixed inset-0 bg-black bg-opacity-75 items-center justify-center p-4 z-50">
-        <div class="modal-content-bg p-6 rounded-lg shadow-xl max-w-sm w-full">
+    
+    <div id="edit-plastic-stock-modal" class="modal">
+        <div class="modal-glass-content p-6 max-w-sm w-full">
             <h3 class="text-lg font-semibold mb-4 text-main">Actualizar Stock de Plástico</h3>
             <input type="hidden" id="edit-plastic-id">
-            <p class="text-label mb-1">Plástico: <span id="editing-plastic-name" class="font-semibold"></span></p>
+            <p class="text-label mb-1">Plástico: <span id="editing-plastic-name" class="font-semibold text-main"></span></p>
             <div class="mb-4">
                 <label for="update-plastic-quantity" class="block text-sm font-medium text-label mb-1">Nueva Cantidad Total (gramos):</label>
                 <input type="number" id="update-plastic-quantity" class="form-input-custom" min="0">
             </div>
             <div class="flex justify-end space-x-3 mt-6">
-                <button id="cancel-update-plastic-button" class="btn-neutral-gray font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                <button id="cancel-update-plastic-button" class="btn btn-neutral-gray py-2 px-4">
                     Cancelar
                 </button>
-                <button id="save-update-plastic-button" class="btn-accent-teal font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                <button id="save-update-plastic-button" class="btn btn-accent-teal py-2 px-4">
                     Actualizar Cantidad
                 </button>
             </div>
@@ -494,7 +405,7 @@
         const plasticQuantityInput = document.getElementById('plastic-quantity');
         const addPlasticButton = document.getElementById('add-plastic-button');
         const plasticStockListDiv = document.getElementById('plastic-stock-list');
-
+        
         // Gestión de Productos Fabricados (Agregar)
         const fabProductNameInput = document.getElementById('fab-product-name');
         const fabProductPriceInput = document.getElementById('fab-product-price');
@@ -514,7 +425,7 @@
         const posCartTotalSpan = document.getElementById('pos-cart-total');
         const posClearCartButton = document.getElementById('pos-clear-cart-button');
         const posCheckoutButton = document.getElementById('pos-checkout-button');
-
+        
         // Opciones de Tienda/Feria
         const generateStoreSummaryButton = document.getElementById('generate-store-summary-button');
         const resetStoreSalesButton = document.getElementById('reset-store-sales-button');
@@ -551,10 +462,10 @@
         // Estado de la Aplicación
         let plastics = []; // { id, name, quantity (grams) }
         let products = []; // { id, name, price, stock, image, plasticCostPerUnit: { typeId, amount, name } (opcional) }
-        let cart = []; // { ...productData, cartItemId (unique for this cart instance) }
+        let cart = [];     // { ...productData, cartItemId (unique for this cart instance) }
         let totalSales = 0;
         let completedSales = []; // { id, items: [...cart], totalAmount, timestamp }
-
+        
         let currentFabProductImageBase64 = null;
         let editingFabProductImageBase64 = null;
 
@@ -581,33 +492,26 @@
             editingFabProductImageBase64 = val;
             removeEditFabImageButton.classList.toggle('hidden', !val);
         }));
-
+        
         removeEditFabImageButton.addEventListener('click', () => {
-            editFabProductImagePreview.src = '';
+            editFabProductImagePreview.src = ''; 
             editFabProductImagePreview.classList.add('hidden');
-            editFabProductImageInput.value = '';
-            editingFabProductImageBase64 = null;
+            editFabProductImageInput.value = ''; 
+            editingFabProductImageBase64 = null; 
             removeEditFabImageButton.classList.add('hidden');
         });
 
 
         // --- Funciones de Modales y Mensajes ---
-        function showModal(modalElement) {
-            modalElement.classList.add('active');
-        }
-
+        function showModal(modalElement) { modalElement.classList.add('active'); }
         function hideModal(modalElement) {
             modalElement.classList.remove('active');
             // Resetear campos de imagen y previews al cerrar modales
-            fabProductImagePreview.classList.add('hidden');
-            fabProductImagePreview.src = '';
-            fabProductImageInput.value = '';
-            currentFabProductImageBase64 = null;
-
-            editFabProductImagePreview.classList.add('hidden');
-            editFabProductImagePreview.src = '';
-            editFabProductImageInput.value = '';
-            editingFabProductImageBase64 = null; // Ensure this is reset
+            fabProductImagePreview.classList.add('hidden'); fabProductImagePreview.src = '';
+            fabProductImageInput.value = ''; currentFabProductImageBase64 = null;
+            
+            editFabProductImagePreview.classList.add('hidden'); editFabProductImagePreview.src = '';
+            editFabProductImageInput.value = ''; editingFabProductImageBase64 = null; 
             removeEditFabImageButton.classList.add('hidden');
 
             // Resetear campos de "Agregar Stock" en modal de edición
@@ -617,10 +521,14 @@
             addStockPlasticTypeSelect.value = '';
             addStockPlasticGramsUnitInput.value = '';
         }
-
         function showMessage(title, textContent, isHtml = false) {
             messageModalTitle.textContent = title;
-            messageModalText.innerHTML = isHtml ? textContent : `<p class="text-secondary">${textContent.replace(/\n/g, '<br>')}</p>`;
+            if (isHtml) {
+                 messageModalText.innerHTML = textContent; // Directly set HTML content
+            } else {
+                // For plain text, ensure it's wrapped in a <p> or similar for consistent styling if needed
+                messageModalText.innerHTML = `<p class="text-label">${textContent.replace(/\n/g, '<br>')}</p>`;
+            }
             showModal(messageModal);
         }
         messageModalClose.addEventListener('click', () => hideModal(messageModal));
@@ -629,11 +537,11 @@
 
         // --- Lógica de Pestañas ---
         function setActiveTab(activeButton, activeContent) {
-            [tabInventarioButton, tabPosButton].forEach(b => {
-                b.classList.remove('tab-active-text', 'tab-active-border', 'border-b-2');
-                b.classList.add('text-gray-400');
+            [tabInventarioButton, tabPosButton].forEach(b => { 
+                b.classList.remove('tab-active-text', 'tab-active-border'); 
+                b.classList.add('text-gray-400'); // Use a more descriptive class if needed from new style
             });
-            activeButton.classList.add('tab-active-text', 'tab-active-border', 'border-b-2');
+            activeButton.classList.add('tab-active-text', 'tab-active-border'); 
             activeButton.classList.remove('text-gray-400');
             [contentInventario, contentPos].forEach(c => c.classList.remove('active'));
             activeContent.classList.add('active');
@@ -648,15 +556,17 @@
             } else {
                 plastics.forEach(p => {
                     const div = document.createElement('div');
-                    div.className = 'card-bg p-3 rounded-md shadow flex justify-between items-center';
+                    // Applied .card-glass for consistency, but might be too much for small items.
+                    // A simpler background or just text might be better. For now, keeping it simple.
+                    div.className = 'bg-[rgba(22,27,34,0.8)] p-3 rounded-lg shadow flex justify-between items-center'; 
                     div.innerHTML = `
                         <div>
                             <p class="font-medium text-main">${p.name}</p>
-                            <p class="text-sm text-blue-400">${p.quantity.toLocaleString()} gramos</p>
+                            <p class="text-sm text-sky-400">${p.quantity.toLocaleString()} gramos</p>
                         </div>
-                        <div>
-                            <button data-id="${p.id}" class="edit-plastic-stock-button text-yellow-400 hover:text-yellow-300 text-xs font-medium p-1">Actualizar Stock</button>
-                            <button data-id="${p.id}" class="delete-plastic-button text-red-400 hover:text-red-300 text-xs font-medium p-1 ml-1">Eliminar</button>
+                        <div class="flex space-x-2">
+                            <button data-id="${p.id}" class="edit-plastic-stock-button text-yellow-400 hover:text-yellow-300 text-xs font-medium p-1">Actualizar</button>
+                            <button data-id="${p.id}" class="delete-plastic-button text-red-400 hover:text-red-300 text-xs font-medium p-1">Eliminar</button>
                         </div>
                     `;
                     plasticStockListDiv.appendChild(div);
@@ -678,11 +588,7 @@
                 showMessage("Error", "Ya existe un plástico con ese nombre.");
                 return;
             }
-            plastics.push({
-                id: `plastic_${Date.now()}`,
-                name,
-                quantity
-            });
+            plastics.push({ id: `plastic_${Date.now()}`, name, quantity });
             savePlasticsToLocalStorage();
             renderPlasticStock();
             plasticNameInput.value = '';
@@ -700,7 +606,7 @@
                 showModal(editPlasticStockModal);
             }
         }
-
+        
         saveUpdatePlasticButton.addEventListener('click', () => {
             const plasticId = editPlasticIdInput.value;
             const newQuantity = parseInt(updatePlasticQuantityInput.value);
@@ -727,7 +633,7 @@
             if (window.confirm("¿Seguro que deseas eliminar este tipo de plástico? Esta acción no se puede deshacer.")) {
                 plastics = plastics.filter(p => p.id !== plasticId);
                 savePlasticsToLocalStorage();
-                renderPlasticStock();
+                renderPlasticStock(); 
                 showMessage("Plástico Eliminado", "El tipo de plástico ha sido eliminado.");
             }
         }
@@ -736,16 +642,17 @@
         function populatePlasticSelects() {
             const selects = [fabPlasticTypeSelect, addStockPlasticTypeSelect];
             selects.forEach(select => {
-                const currentValue = select.value;
-                select.innerHTML = '<option value="">Seleccione un plástico...</option>';
+                const currentValue = select.value; 
+                select.innerHTML = '<option value="" class="bg-slate-700">Seleccione un plástico...</option>'; 
                 plastics.forEach(p => {
                     const option = document.createElement('option');
                     option.value = p.id;
                     option.textContent = `${p.name} (${p.quantity}g disp.)`;
+                    option.className = "bg-slate-700"; // Style options for dark mode
                     select.appendChild(option);
                 });
                 if (plastics.find(p => p.id === currentValue)) {
-                    select.value = currentValue;
+                    select.value = currentValue; 
                 }
             });
         }
@@ -785,53 +692,41 @@
                     showMessage("Error", `Stock insuficiente de ${selectedPlastic.name}. Necesita ${totalPlasticNeeded}g, disponibles ${selectedPlastic.quantity}g.`);
                     return;
                 }
-                plasticCostPerUnit = {
-                    typeId: plasticTypeId,
-                    amount: gramsPerUnit,
-                    name: selectedPlastic.name
-                };
+                plasticCostPerUnit = { typeId: plasticTypeId, amount: gramsPerUnit, name: selectedPlastic.name };
             }
 
             if (selectedPlastic && totalPlasticNeeded > 0) {
                 selectedPlastic.quantity -= totalPlasticNeeded;
-                savePlasticsToLocalStorage();
+                savePlasticsToLocalStorage(); 
             }
-
+            
             const existingProduct = products.find(p => p.name.toLowerCase() === name.toLowerCase());
-            if (existingProduct) {
+            if (existingProduct) { 
                 existingProduct.stock += quantityManufactured;
-                if (plasticCostPerUnit) { // Update plastic cost if new info provided
+                 if (plasticCostPerUnit) { 
                     existingProduct.plasticCostPerUnit = plasticCostPerUnit;
                 }
-                if (currentFabProductImageBase64 !== null) { // Check if a new image was selected (null means no change or cleared)
+                if (currentFabProductImageBase64 !== null) { 
                     existingProduct.image = currentFabProductImageBase64;
                 }
-            } else {
-                products.push({
-                    id: `prod_${Date.now()}`,
-                    name,
-                    price,
-                    stock: quantityManufactured,
+            } else { 
+                 products.push({
+                    id: `prod_${Date.now()}`, name, price, 
+                    stock: quantityManufactured, 
                     image: currentFabProductImageBase64,
-                    plasticCostPerUnit
+                    plasticCostPerUnit 
                 });
             }
 
-            saveProductsToLocalStorage();
-            renderAll();
+            saveProductsToLocalStorage(); 
+            renderAll(); 
 
             showMessage("Éxito", `Producto "${name}" (${quantityManufactured} uds) agregado/actualizado en inventario.`);
-            fabProductNameInput.value = '';
-            fabProductPriceInput.value = '';
-            fabProductQuantityInput.value = '';
-            fabProductImageInput.value = '';
-            fabProductImagePreview.classList.add('hidden');
-            fabProductImagePreview.src = '';
+            fabProductNameInput.value = ''; fabProductPriceInput.value = ''; fabProductQuantityInput.value = '';
+            fabProductImageInput.value = ''; fabProductImagePreview.classList.add('hidden'); fabProductImagePreview.src = '';
             currentFabProductImageBase64 = null;
-            fabDeductPlasticCheck.checked = false;
-            fabPlasticDetailsDiv.classList.add('hidden');
-            fabPlasticTypeSelect.value = '';
-            fabPlasticGramsUnitInput.value = '';
+            fabDeductPlasticCheck.checked = false; fabPlasticDetailsDiv.classList.add('hidden');
+            fabPlasticTypeSelect.value = ''; fabPlasticGramsUnitInput.value = '';
         }
         addFabProductButton.addEventListener('click', addFabProduct);
 
@@ -842,26 +737,26 @@
             } else {
                 products.forEach(p => {
                     const div = document.createElement('div');
-                    div.className = 'card-bg p-3 rounded-lg shadow-md flex items-center';
-                    let imageHtml = p.image ? `<img src="${p.image}" alt="${p.name}" class="product-image-preview mr-3">` : `<div class="product-image-placeholder mr-3"><span>Sin<br>Img</span></div>`;
+                    div.className = 'card-glass p-3 flex items-center'; // Using card-glass
+                    let imageHtml = p.image ? `<img src="${p.image}" alt="${p.name}" class="product-image-preview mr-4">` : `<div class="product-image-placeholder mr-4"><span>Sin<br>Img</span></div>`;
                     let plasticInfo = '';
                     if (p.plasticCostPerUnit) {
                         const plasticType = plastics.find(pl => pl.id === p.plasticCostPerUnit.typeId);
-                        const plasticTypeName = plasticType ? plasticType.name : (p.plasticCostPerUnit.name || 'Desconocido'); // Fallback to stored name
-                        plasticInfo = `<p class="text-xs text-gray-500">Usa: ${p.plasticCostPerUnit.amount}g de ${plasticTypeName}</p>`;
+                        const plasticTypeName = plasticType ? plasticType.name : (p.plasticCostPerUnit.name || 'Desconocido');
+                        plasticInfo = `<p class="text-xs text-slate-400">Usa: ${p.plasticCostPerUnit.amount}g de ${plasticTypeName}</p>`;
                     }
 
                     div.innerHTML = `
                         ${imageHtml}
                         <div class="flex-grow">
                             <p class="font-medium text-main">${p.name}</p>
-                            <p class="text-sm text-blue-400 font-semibold">ARS ${p.price.toFixed(2)}</p>
-                            <p class="text-main">Stock: ${p.stock} uds.</p>
+                            <p class="text-sm text-sky-400 font-semibold">ARS ${p.price.toFixed(2)}</p>
+                            <p class="text-sm text-main">Stock: ${p.stock} uds.</p>
                             ${plasticInfo}
                         </div>
                         <div class="flex flex-col space-y-1 flex-shrink-0 ml-2">
-                            <button data-id="${p.id}" class="edit-fab-product-button text-yellow-400 hover:text-yellow-300 text-xs font-medium p-1 w-full text-right">Modificar / Agregar Stock</button>
-                            <button data-id="${p.id}" class="delete-fab-product-button text-red-400 hover:text-red-300 text-xs font-medium p-1 w-full text-right">Eliminar Producto</button>
+                            <button data-id="${p.id}" class="edit-fab-product-button text-yellow-400 hover:text-yellow-300 text-xs font-medium p-1 text-right">Modificar</button>
+                            <button data-id="${p.id}" class="delete-fab-product-button text-red-400 hover:text-red-300 text-xs font-medium p-1 text-right">Eliminar</button>
                         </div>
                     `;
                     fabProductListDiv.appendChild(div);
@@ -870,17 +765,16 @@
             document.querySelectorAll('.edit-fab-product-button').forEach(btn => btn.addEventListener('click', (e) => openEditFabProductModal(e.target.dataset.id)));
             document.querySelectorAll('.delete-fab-product-button').forEach(btn => btn.addEventListener('click', (e) => deleteFabProduct(e.target.dataset.id)));
         }
-
+        
         function openEditFabProductModal(productId) {
             const product = products.find(p => p.id === productId);
             if (product) {
-                // hideModal(editFabProductModal); // Not needed here, as hideModal is called on cancel/save
                 editFabProductIdInput.value = product.id;
                 editFabProductNameInput.value = product.name;
                 editFabProductPriceInput.value = product.price.toFixed(2);
-                addStockQuantityInput.value = "0";
+                addStockQuantityInput.value = "0"; 
 
-                editingFabProductImageBase64 = product.image || null; // Set current image for editing
+                editingFabProductImageBase64 = product.image || null; 
                 if (product.image) {
                     editFabProductImagePreview.src = product.image;
                     editFabProductImagePreview.classList.remove('hidden');
@@ -890,12 +784,12 @@
                     editFabProductImagePreview.classList.add('hidden');
                     removeEditFabImageButton.classList.add('hidden');
                 }
-                editFabProductImageInput.value = ''; // Clear file input
+                editFabProductImageInput.value = ''; 
 
                 addStockDeductPlasticCheck.checked = false;
                 addStockPlasticDetailsDiv.classList.add('hidden');
-                addStockPlasticTypeSelect.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.typeId : '';
-                addStockPlasticGramsUnitInput.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.amount : '';
+                addStockPlasticTypeSelect.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.typeId : ''; 
+                addStockPlasticGramsUnitInput.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.amount : ''; 
 
                 showModal(editFabProductModal);
             }
@@ -913,21 +807,18 @@
             const newPrice = parseFloat(editFabProductPriceInput.value);
 
             if (!newName || isNaN(newPrice) || newPrice < 0) {
-                showMessage("Error", "Nombre y precio válido son requeridos.");
-                return;
+                 showMessage("Error", "Nombre y precio válido son requeridos.");
+                 return;
             }
             product.name = newName;
             product.price = newPrice;
-
-            // editingFabProductImageBase64 will hold the new image if selected, or null if removed, or product.image if unchanged via input
-            // The handleImagePreview and remove button already manage editingFabProductImageBase64
             product.image = editingFabProductImageBase64;
 
 
             const additionalQuantity = parseInt(addStockQuantityInput.value);
             if (isNaN(additionalQuantity) || additionalQuantity < 0) {
-                showMessage("Error", "Cantidad adicional a fabricar debe ser un número no negativo.");
-                return;
+                 showMessage("Error", "Cantidad adicional a fabricar debe ser un número no negativo.");
+                 return;
             }
 
             let modifiedPlasticStock = false;
@@ -954,11 +845,7 @@
                         showMessage("Error", `Stock insuficiente de ${selectedPlasticForNewBatch.name} para el nuevo lote. Necesita ${totalPlasticForNewBatch}g, disponibles ${selectedPlasticForNewBatch.quantity}g.`);
                         return;
                     }
-                    plasticCostForNewBatch = {
-                        typeId: plasticTypeId,
-                        amount: gramsPerUnit,
-                        name: selectedPlasticForNewBatch.name
-                    };
+                    plasticCostForNewBatch = { typeId: plasticTypeId, amount: gramsPerUnit, name: selectedPlasticForNewBatch.name };
                 }
 
                 if (selectedPlasticForNewBatch && totalPlasticForNewBatch > 0) {
@@ -967,13 +854,13 @@
                 }
                 product.stock += additionalQuantity;
                 if (plasticCostForNewBatch) {
-                    product.plasticCostPerUnit = plasticCostForNewBatch;
+                     product.plasticCostPerUnit = plasticCostForNewBatch;
                 }
             }
-
+            
             saveProductsToLocalStorage();
-            if (modifiedPlasticStock) savePlasticsToLocalStorage();
-
+            if (modifiedPlasticStock) savePlasticsToLocalStorage(); 
+            
             renderAll();
             hideModal(editFabProductModal);
             showMessage("Éxito", `Producto "${product.name}" actualizado. Stock total: ${product.stock}.`);
@@ -999,15 +886,15 @@
             }
             availableProducts.forEach(p => {
                 const button = document.createElement('button');
-                button.className = `font-semibold rounded-lg shadow-md transition-colors flex flex-col items-center justify-between overflow-hidden card-bg hover:ring-2 hover:ring-blue-500`;
+                button.className = `card-glass flex flex-col items-center justify-between overflow-hidden hover:border-sky-500 transition-colors`;
                 let imageHtml = p.image ? `<img src="${p.image}" alt="${p.name}" class="product-image-sales">` : `<div class="product-image-sales-placeholder"><span>Sin Imagen</span></div>`;
-                const textContainerClass = p.image ? 'p-2' : 'p-2 flex-grow flex flex-col justify-center';
+                const textContainerClass = p.image ? 'p-2.5' : 'p-2.5 flex-grow flex flex-col justify-center'; // Adjusted padding
                 button.innerHTML = `
                     ${imageHtml}
                     <div class="${textContainerClass} w-full">
-                        <span class="text-sm text-main block truncate">${p.name}</span>
-                        <span class="text-xs text-blue-400 mt-1 block">ARS ${p.price.toFixed(2)}</span>
-                        <span class="text-xs text-gray-400 mt-1 block">Disp: ${p.stock}</span>
+                        <span class="text-sm text-main block truncate font-medium">${p.name}</span>
+                        <span class="text-xs text-sky-400 mt-1 block">ARS ${p.price.toFixed(2)}</span>
+                        <span class="text-xs text-slate-400 mt-1 block">Disp: ${p.stock}</span>
                     </div>
                 `;
                 button.addEventListener('click', () => addProductToCartPOS(p.id));
@@ -1018,13 +905,11 @@
         function addProductToCartPOS(productId) {
             const product = products.find(p => p.id === productId);
             if (product && product.stock > 0) {
-                cart.push({...product,
-                    cartItemId: `cart_${Date.now()}_${Math.random().toString(36).substr(2,5)}`
-                });
-                product.stock--;
+                cart.push({ ...product, cartItemId: `cart_${Date.now()}_${Math.random().toString(36).substr(2,5)}` });
+                product.stock--; 
                 saveProductsToLocalStorage();
                 renderCartPOS();
-                renderProductsForSalePOS();
+                renderProductsForSalePOS(); 
             }
         }
 
@@ -1032,14 +917,14 @@
             const cartItemIndex = cart.findIndex(item => item.cartItemId === cartItemId);
             if (cartItemIndex > -1) {
                 const removedItem = cart[cartItemIndex];
-                const productInInventory = products.find(p => p.id === removedItem.id);
+                const productInInventory = products.find(p => p.id === removedItem.id); 
                 if (productInInventory) {
-                    productInInventory.stock++;
+                    productInInventory.stock++; 
                     saveProductsToLocalStorage();
                 }
                 cart.splice(cartItemIndex, 1);
                 renderCartPOS();
-                renderProductsForSalePOS();
+                renderProductsForSalePOS(); 
             }
         }
 
@@ -1051,12 +936,12 @@
             } else {
                 cart.forEach(item => {
                     const div = document.createElement('div');
-                    div.className = 'flex justify-between items-center py-1';
+                    div.className = 'flex justify-between items-center py-1.5';
                     div.innerHTML = `
                         <span class="text-sm text-label">${item.name}</span>
                         <div class="flex items-center">
-                            <span class="text-sm text-main font-medium mr-2">ARS ${item.price.toFixed(2)}</span>
-                            <button data-cart-item-id="${item.cartItemId}" class="pos-remove-from-cart-button text-red-400 hover:text-red-300 text-lg p-0 leading-none">&times;</button>
+                            <span class="text-sm text-main font-medium mr-3">ARS ${item.price.toFixed(2)}</span>
+                            <button data-cart-item-id="${item.cartItemId}" class="pos-remove-from-cart-button text-red-400 hover:text-red-300 text-xl p-0 leading-none">&times;</button>
                         </div>
                     `;
                     posCartItemsDiv.appendChild(div);
@@ -1064,18 +949,19 @@
                 });
             }
             posCartTotalSpan.textContent = `ARS ${currentTotal.toFixed(2)}`;
+             posCartTotalSpan.className = currentTotal > 0 ? 'text-green-400' : 'text-slate-400'; // Dynamic color for total
             document.querySelectorAll('.pos-remove-from-cart-button').forEach(btn => btn.addEventListener('click', (e) => removeProductFromCartPOS(e.target.dataset.cartItemId)));
         }
-
+        
         posClearCartButton.addEventListener('click', () => {
             if (cart.length > 0) {
-                cart.forEach(cartItem => {
+                cart.forEach(cartItem => { 
                     const productInInventory = products.find(p => p.id === cartItem.id);
                     if (productInInventory) productInInventory.stock++;
                 });
                 cart = [];
                 saveProductsToLocalStorage();
-                renderAll();
+                renderAll(); 
                 showMessage("Carrito Vacío", "El carrito ha sido vaciado y el stock restaurado.");
             }
         });
@@ -1087,51 +973,35 @@
             }
             const saleAmount = cart.reduce((sum, item) => sum + item.price, 0);
             totalSales += saleAmount;
-            completedSales.push({
-                id: `storeSale_${Date.now()}`,
-                items: [...cart],
-                totalAmount: saleAmount,
-                timestamp: new Date().toISOString()
-            });
-
+            completedSales.push({ id: `storeSale_${Date.now()}`, items: [...cart], totalAmount: saleAmount, timestamp: new Date().toISOString() });
+            
             saveTotalSalesToLocalStorage();
             saveCompletedSalesToLocalStorage();
-            // Products stock already updated and saved by addProductToCartPOS
-
+            
             showMessage("Venta Finalizada", `Venta de ARS ${saleAmount.toFixed(2)} completada. Total del día: ARS ${totalSales.toFixed(2)}.`);
             cart = [];
-            renderAll();
+            renderAll(); 
         });
 
         // --- Opciones de Tienda (Resumen, Reinicio) ---
         resetStoreSalesButton.addEventListener('click', () => {
-            // Updated confirmation message and logic
             if (window.confirm("¿Empezar un nuevo día de caja? Se borrará el total y detalle de ventas, y se vaciará el carrito actual. El inventario de productos y plásticos no se modificará.")) {
-                totalSales = 0;
+                totalSales = 0; 
                 completedSales = [];
-                localStorage.removeItem('posTotalSales');
+                localStorage.removeItem('posTotalSales'); 
                 localStorage.removeItem('posCompletedSales');
-
-                // Empty the cart without returning stock to inventory
-                cart = [];
-                // No need to call saveProductsToLocalStorage() here as stock is not changing.
-
+                cart = []; 
                 renderAll();
                 showMessage('Nuevo Día Iniciado', 'Los contadores de ventas y el carrito han sido reiniciados. El stock de productos se mantiene.');
             }
         });
         generateStoreSummaryButton.addEventListener('click', () => {
             if (completedSales.length === 0) {
-                showMessage('Resumen de Ventas', 'No hay ventas registradas para este período.');
-                return;
+                showMessage('Resumen de Ventas', 'No hay ventas registradas para este período.'); return;
             }
             const productSummary = {};
             completedSales.forEach(sale => sale.items.forEach(item => {
-                productSummary[item.id] = productSummary[item.id] || {
-                    name: item.name,
-                    quantity: 0,
-                    totalRevenue: 0
-                };
+                productSummary[item.id] = productSummary[item.id] || { name: item.name, quantity: 0, totalRevenue: 0 };
                 productSummary[item.id].quantity++;
                 productSummary[item.id].totalRevenue += item.price;
             }));
@@ -1143,13 +1013,12 @@
             summaryText += `</pre>`;
             showMessage('Resumen de Ventas', summaryText, true);
         });
-
+        
 
         // --- LocalStorage Functions ---
         function savePlasticsToLocalStorage() {
             localStorage.setItem('posPlastics', JSON.stringify(plastics));
         }
-
         function loadPlasticsFromLocalStorage() {
             const storedPlastics = localStorage.getItem('posPlastics');
             plastics = storedPlastics ? JSON.parse(storedPlastics) : [];
@@ -1158,7 +1027,6 @@
         function saveProductsToLocalStorage() {
             localStorage.setItem('posProducts', JSON.stringify(products));
         }
-
         function loadProductsFromLocalStorage() {
             const storedProducts = localStorage.getItem('posProducts');
             products = storedProducts ? JSON.parse(storedProducts) : [];
@@ -1167,7 +1035,6 @@
         function saveTotalSalesToLocalStorage() {
             localStorage.setItem('posTotalSales', JSON.stringify(totalSales));
         }
-
         function loadTotalSalesFromLocalStorage() {
             const storedSales = localStorage.getItem('posTotalSales');
             totalSales = storedSales ? JSON.parse(storedSales) : 0;
@@ -1176,19 +1043,12 @@
         function saveCompletedSalesToLocalStorage() {
             localStorage.setItem('posCompletedSales', JSON.stringify(completedSales));
         }
-
         function loadCompletedSalesFromLocalStorage() {
             const storedCompletedSales = localStorage.getItem('posCompletedSales');
             completedSales = storedCompletedSales ? JSON.parse(storedCompletedSales) : [];
         }
-
-        // --- Render Total Sales (placeholder, as it's mainly shown in summary) ---
-        function renderTotalSales() {
-            // This function is called by renderAll. 
-            // Currently, totalSales is primarily displayed in the summary modal.
-            // If you add a dedicated display element for total sales on the main UI, update it here.
-            // console.log("Total sales updated in state:", totalSales);
-        }
+        
+        function renderTotalSales() { /* Placeholder, total sales shown in summary */ }
 
         // --- Inicialización y Renderizado Global ---
         function renderAll() {
@@ -1196,7 +1056,7 @@
             renderFabProductList();
             renderProductsForSalePOS();
             renderCartPOS();
-            renderTotalSales(); // Now defined
+            renderTotalSales(); 
         }
 
         function initializeApp() {
@@ -1204,22 +1064,24 @@
             loadProductsFromLocalStorage();
             loadTotalSalesFromLocalStorage();
             loadCompletedSalesFromLocalStorage();
-            renderAll();
+            
+            // Set initial active tab based on localStorage or default to 'tab-inventario'
             const activeTabId = localStorage.getItem('activeStoreTab') || 'tab-inventario';
             const buttonToActivate = document.getElementById(activeTabId) || tabInventarioButton;
             const contentToActivate = activeTabId === 'tab-pos' ? contentPos : contentInventario;
             setActiveTab(buttonToActivate, contentToActivate);
-        }
 
+            renderAll(); // Render all components after setting the active tab
+        }
+        
         // Event Listeners para Pestañas
         tabInventarioButton.addEventListener('click', () => setActiveTab(tabInventarioButton, contentInventario));
-        tabPosButton.addEventListener('click', () => {
-            setActiveTab(tabPosButton, contentPos);
-            renderProductsForSalePOS();
+        tabPosButton.addEventListener('click', () => { 
+            setActiveTab(tabPosButton, contentPos); 
+            renderProductsForSalePOS(); // Ensure POS products are rendered when tab becomes active
         });
 
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
-
 </html>
