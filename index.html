@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Tienda 3D</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827;
+            /* bg-gray-900 */
+            color: #d1d5db;
+            /* text-gray-300 */
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card-bg {
+            background-color: #1f2937;
+            /* bg-gray-800 */
+        }
+        
+        .text-main {
+            color: #f3f4f6;
+            /* text-gray-100 */
+        }
+        
+        .text-secondary {
+            color: #9ca3af;
+            /* text-gray-400 */
+        }
+        
+        .text-label {
+            color: #cbd5e1;
+            /* text-slate-300 */
+        }
+        
+        .form-input-custom,
+        .form-select-custom,
+        .form-file-custom {
+            background-color: #374151;
+            /* bg-gray-700 */
+            border-color: #4b5563;
+            /* border-gray-600 */
+            color: #f3f4f6;
+            /* text-gray-100 */
+            border-width: 1px;
+            border-radius: 0.375rem;
+            /* rounded-md */
+            padding: 0.5rem 0.75rem;
+            /* p-2 px-3 */
+            width: 100%;
+        }
+        
+        .form-input-custom::placeholder {
+            color: #6b7280;
+        }
+        
+        .form-input-custom:focus,
+        .form-select-custom:focus,
+        .form-file-custom:focus {
+            --tw-ring-color: #2563eb;
+            /* ring-blue-600 */
+            border-color: #2563eb;
+            /* border-blue-600 */
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+        
+        .form-file-custom::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+        
+        .form-file-custom::before {
+            content: 'Seleccionar archivo';
+            display: inline-block;
+            background: #4b5563;
+            border: 1px solid #6b7280;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            outline: none;
+            white-space: nowrap;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #e5e7eb;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        .form-file-custom:hover::before {
+            background-color: #6b7280;
+        }
+        
+        .disabled-product {
+            background-color: #4b5563 !important;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .disabled-product:hover {
+            background-color: #4b5563 !important;
+        }
+        
+        .modal {
+            display: none;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content-bg {
+            background-color: #1f2937;
+        }
+        
+        #message-modal-text pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 60vh;
+            overflow-y: auto;
+            text-align: left;
+            background-color: #374151;
+            color: #e5e7eb;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #4b5563;
+        }
+        
+        .header-bg {
+            background-color: #1e40af;
+        }
+        
+        .nav-bg {
+            background-color: #374151;
+        }
+        
+        .tab-active-border {
+            border-color: #3b82f6;
+        }
+        
+        .tab-active-text {
+            color: #60a5fa;
+        }
+        
+        .btn-primary-green {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .btn-primary-green:hover {
+            background-color: #059669;
+        }
+        
+        .btn-primary-green:active {
+            background-color: #047857;
+        }
+        
+        .btn-secondary-blue {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-secondary-blue:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-secondary-blue:active {
+            background-color: #1d4ed8;
+        }
+        
+        .btn-accent-teal {
+            background-color: #14b8a6;
+            color: white;
+        }
+        /* Teal for plastic actions */
+        
+        .btn-accent-teal:hover {
+            background-color: #0d9488;
+        }
+        
+        .btn-warning-orange {
+            background-color: #f97316;
+            color: white;
+        }
+        
+        .btn-warning-orange:hover {
+            background-color: #ea580c;
+        }
+        
+        .btn-danger-red {
+            background-color: #ef4444;
+            color: white;
+        }
+        
+        .btn-danger-red:hover {
+            background-color: #dc2626;
+        }
+        
+        .btn-neutral-gray {
+            background-color: #4b5563;
+            color: #e5e7eb;
+        }
+        
+        .btn-neutral-gray:hover {
+            background-color: #6b7280;
+        }
+        
+        .product-image-preview {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 0.375rem;
+            border: 1px solid #4b5563;
+            background-color: #374151;
+        }
+        
+        .product-image-sales {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 0.375rem 0.375rem 0 0;
+        }
+        
+        .product-image-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background-color: #374151;
+            border-radius: 0.375rem;
+            color: #9ca3af;
+            font-size: 0.75rem;
+            border: 1px solid #4b5563;
+        }
+        
+        .product-image-sales-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 80px;
+            background-color: #374151;
+            border-radius: 0.375rem 0.375rem 0 0;
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <header class="header-bg text-white p-4 shadow-lg">
+        <h1 class="text-2xl font-bold text-center">Sistema de Gestión Tienda 3D</h1>
+    </header>
+
+    <nav class="nav-bg shadow-md sticky top-0 z-10">
+        <div class="max-w-xl mx-auto flex">
+            <button id="tab-inventario" class="tab-button flex-1 py-3 px-2 text-center font-semibold tab-active-text tab-active-border border-b-2 hover:bg-gray-600 transition-colors">
+                Gestión de Inventario
+            </button>
+            <button id="tab-pos" class="tab-button flex-1 py-3 px-2 text-center font-semibold text-gray-400 hover:bg-gray-600 transition-colors">
+                Punto de Venta (POS)
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-grow p-4 max-w-xl mx-auto w-full">
+        <section id="content-inventario" class="tab-content active space-y-6">
+            <div>
+                <h2 class="text-xl font-semibold mb-3 text-main">Materia Prima: Plástico</h2>
+                <div class="card-bg p-4 rounded-lg shadow-xl">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="plastic-name" class="block text-sm font-medium text-label mb-1">Nombre del Plástico (ej: PLA Rojo):</label>
+                            <input type="text" id="plastic-name" class="form-input-custom" placeholder="PLA Rojo 1kg">
+                        </div>
+                        <div>
+                            <label for="plastic-quantity" class="block text-sm font-medium text-label mb-1">Cantidad Inicial (gramos):</label>
+                            <input type="number" id="plastic-quantity" class="form-input-custom" placeholder="1000" min="0">
+                        </div>
+                    </div>
+                    <button id="add-plastic-button" class="w-full btn-accent-teal font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                        Agregar Tipo de Plástico
+                    </button>
+
+                    <h3 class="text-lg font-semibold mt-6 mb-3 text-main">Stock de Plásticos</h3>
+                    <div id="plastic-stock-list" class="space-y-2">
+                        <p class="text-secondary text-sm">No hay plásticos registrados.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold mb-3 text-main">Productos Fabricados</h2>
+                <div class="card-bg p-4 rounded-lg shadow-xl">
+                    <h3 class="text-lg font-semibold mb-3 text-main">Agregar Nuevo Producto Fabricado</h3>
+                    <div class="mb-3">
+                        <label for="fab-product-name" class="block text-sm font-medium text-label mb-1">Nombre del Producto:</label>
+                        <input type="text" id="fab-product-name" class="form-input-custom" placeholder="Ej: Llavero Gato">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                        <div>
+                            <label for="fab-product-price" class="block text-sm font-medium text-label mb-1">Precio de Venta (ARS):</label>
+                            <input type="number" id="fab-product-price" class="form-input-custom" placeholder="500.00" step="0.01" min="0">
+                        </div>
+                        <div>
+                            <label for="fab-product-quantity" class="block text-sm font-medium text-label mb-1">Cantidad Fabricada (Unidades):</label>
+                            <input type="number" id="fab-product-quantity" class="form-input-custom" placeholder="10" step="1" min="1">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fab-product-image-input" class="block text-sm font-medium text-label mb-1">Imagen (Opcional):</label>
+                        <input type="file" id="fab-product-image-input" class="form-file-custom" accept="image/*">
+                        <img id="fab-product-image-preview" class="mt-2 product-image-preview hidden" alt="Vista previa">
+                    </div>
+                    <div class="mb-3 p-3 border border-gray-700 rounded-md">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" id="fab-deduct-plastic-check" class="form-checkbox h-5 w-5 text-blue-500 bg-gray-600 border-gray-500 rounded focus:ring-blue-400">
+                            <span class="text-sm text-label">Descontar plástico de materia prima para este lote</span>
+                        </label>
+                        <div id="fab-plastic-details" class="mt-2 space-y-2 hidden">
+                            <div>
+                                <label for="fab-plastic-type-select" class="block text-xs font-medium text-label mb-1">Tipo de Plástico Usado:</label>
+                                <select id="fab-plastic-type-select" class="form-select-custom">
+                                    <option value="">Seleccione un plástico...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="fab-plastic-grams-unit" class="block text-xs font-medium text-label mb-1">Gramos de Plástico por Unidad:</label>
+                                <input type="number" id="fab-plastic-grams-unit" class="form-input-custom" placeholder="15" min="0.1" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                    <button id="add-fab-product-button" class="w-full btn-primary-green font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                        Agregar Producto al Inventario
+                    </button>
+
+                    <h3 class="text-lg font-semibold mt-6 mb-3 text-main">Inventario de Productos Fabricados</h3>
+                    <div id="fab-product-list" class="space-y-3">
+                        <p class="text-secondary text-sm">No hay productos fabricados en inventario.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 card-bg p-4 rounded-lg shadow-xl space-y-3">
+                <h3 class="text-lg font-semibold mb-2 text-main">Opciones Generales de Tienda</h3>
+                <button id="generate-store-summary-button" class="w-full btn-secondary-blue font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                    Generar Resumen de Ventas del Día
+                </button>
+                <button id="reset-store-sales-button" class="w-full btn-warning-orange font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                    Empezar un Nuevo Día
+                </button>
+            </div>
+        </section>
+
+        <section id="content-pos" class="tab-content">
+            <h2 class="text-xl font-semibold mb-4 text-main">Seleccionar Productos para Vender</h2>
+            <div id="pos-product-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
+                <p class="text-secondary text-sm col-span-full">No hay productos disponibles para la venta.</p>
+            </div>
+
+            <h3 class="text-lg font-semibold mb-3 text-main">Carrito de Compras</h3>
+            <div class="card-bg p-4 rounded-lg shadow-xl">
+                <div id="pos-cart-items" class="space-y-2 mb-3 min-h-[40px]">
+                    <p class="text-secondary text-sm">El carrito está vacío.</p>
+                </div>
+                <div class="border-t border-gray-700 pt-3">
+                    <div class="flex justify-between items-center font-bold text-lg text-main">
+                        <span>Total:</span>
+                        <span id="pos-cart-total" class="text-green-400">ARS 0.00</span>
+                    </div>
+                </div>
+                <button id="pos-clear-cart-button" class="mt-4 w-full btn-danger-red font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                    Vaciar Carrito
+                </button>
+                <button id="pos-checkout-button" class="mt-2 w-full btn-primary-green font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                    Finalizar Venta
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <div id="message-modal" class="modal fixed inset-0 bg-black bg-opacity-75 items-center justify-center p-4 z-50">
+        <div class="modal-content-bg p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h3 id="message-modal-title" class="text-lg font-semibold mb-3 text-main">Mensaje</h3>
+            <div id="message-modal-text" class="text-sm text-secondary mb-4"></div>
+            <button id="message-modal-close" class="w-full btn-secondary-blue font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                Entendido
+            </button>
+        </div>
+    </div>
+
+    <div id="edit-fab-product-modal" class="modal fixed inset-0 bg-black bg-opacity-75 items-center justify-center p-4 z-50">
+        <div class="modal-content-bg p-6 rounded-lg shadow-xl max-w-lg w-full">
+            <h3 class="text-lg font-semibold mb-4 text-main">Modificar Producto Fabricado</h3>
+            <input type="hidden" id="edit-fab-product-id">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="edit-fab-product-name" class="block text-sm font-medium text-label mb-1">Nombre:</label>
+                    <input type="text" id="edit-fab-product-name" class="form-input-custom">
+                </div>
+                <div>
+                    <label for="edit-fab-product-price" class="block text-sm font-medium text-label mb-1">Precio (ARS):</label>
+                    <input type="number" id="edit-fab-product-price" class="form-input-custom" step="0.01" min="0">
+                </div>
+            </div>
+            <div class="mt-4">
+                <label for="edit-fab-product-image-input" class="block text-sm font-medium text-label mb-1">Cambiar Imagen (Opcional):</label>
+                <input type="file" id="edit-fab-product-image-input" class="form-file-custom" accept="image/*">
+                <div class="flex items-center mt-2">
+                    <img id="edit-fab-product-image-preview" class="product-image-preview" alt="Imagen actual">
+                    <button id="remove-edit-fab-image-button" class="ml-2 text-xs btn-danger-red px-2 py-1 rounded-md hidden">Quitar</button>
+                </div>
+            </div>
+            <hr class="my-4 border-gray-700">
+            <div>
+                <h4 class="text-md font-semibold mb-2 text-main">Agregar más Stock (Fabricar Lote Adicional)</h4>
+                <div class="mb-3">
+                    <label for="add-stock-quantity" class="block text-sm font-medium text-label mb-1">Cantidad Adicional a Fabricar:</label>
+                    <input type="number" id="add-stock-quantity" class="form-input-custom" placeholder="0" min="0">
+                </div>
+                <div class="mb-3 p-3 border border-gray-700 rounded-md">
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" id="add-stock-deduct-plastic-check" class="form-checkbox h-5 w-5 text-blue-500 bg-gray-600 border-gray-500 rounded focus:ring-blue-400">
+                        <span class="text-sm text-label">Descontar plástico para este lote adicional</span>
+                    </label>
+                    <div id="add-stock-plastic-details" class="mt-2 space-y-2 hidden">
+                        <div>
+                            <label for="add-stock-plastic-type-select" class="block text-xs font-medium text-label mb-1">Tipo de Plástico Usado:</label>
+                            <select id="add-stock-plastic-type-select" class="form-select-custom">
+                                <option value="">Seleccione un plástico...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="add-stock-plastic-grams-unit" class="block text-xs font-medium text-label mb-1">Gramos de Plástico por Unidad (para este lote):</label>
+                            <input type="number" id="add-stock-plastic-grams-unit" class="form-input-custom" placeholder="Gramos por unidad" min="0.1" step="0.1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+                <button id="cancel-edit-fab-button" class="btn-neutral-gray font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                    Cancelar
+                </button>
+                <button id="save-edit-fab-button" class="btn-primary-green font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                    Guardar Cambios y/o Agregar Stock
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-plastic-stock-modal" class="modal fixed inset-0 bg-black bg-opacity-75 items-center justify-center p-4 z-50">
+        <div class="modal-content-bg p-6 rounded-lg shadow-xl max-w-sm w-full">
+            <h3 class="text-lg font-semibold mb-4 text-main">Actualizar Stock de Plástico</h3>
+            <input type="hidden" id="edit-plastic-id">
+            <p class="text-label mb-1">Plástico: <span id="editing-plastic-name" class="font-semibold"></span></p>
+            <div class="mb-4">
+                <label for="update-plastic-quantity" class="block text-sm font-medium text-label mb-1">Nueva Cantidad Total (gramos):</label>
+                <input type="number" id="update-plastic-quantity" class="form-input-custom" min="0">
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+                <button id="cancel-update-plastic-button" class="btn-neutral-gray font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                    Cancelar
+                </button>
+                <button id="save-update-plastic-button" class="btn-accent-teal font-semibold py-2 px-4 rounded-md shadow-md transition-colors">
+                    Actualizar Cantidad
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // IDs de elementos DOM
+        const tabInventarioButton = document.getElementById('tab-inventario');
+        const tabPosButton = document.getElementById('tab-pos');
+        const contentInventario = document.getElementById('content-inventario');
+        const contentPos = document.getElementById('content-pos');
+
+        // Gestión de Plástico
+        const plasticNameInput = document.getElementById('plastic-name');
+        const plasticQuantityInput = document.getElementById('plastic-quantity');
+        const addPlasticButton = document.getElementById('add-plastic-button');
+        const plasticStockListDiv = document.getElementById('plastic-stock-list');
+
+        // Gestión de Productos Fabricados (Agregar)
+        const fabProductNameInput = document.getElementById('fab-product-name');
+        const fabProductPriceInput = document.getElementById('fab-product-price');
+        const fabProductQuantityInput = document.getElementById('fab-product-quantity');
+        const fabProductImageInput = document.getElementById('fab-product-image-input');
+        const fabProductImagePreview = document.getElementById('fab-product-image-preview');
+        const fabDeductPlasticCheck = document.getElementById('fab-deduct-plastic-check');
+        const fabPlasticDetailsDiv = document.getElementById('fab-plastic-details');
+        const fabPlasticTypeSelect = document.getElementById('fab-plastic-type-select');
+        const fabPlasticGramsUnitInput = document.getElementById('fab-plastic-grams-unit');
+        const addFabProductButton = document.getElementById('add-fab-product-button');
+        const fabProductListDiv = document.getElementById('fab-product-list');
+
+        // POS
+        const posProductListDiv = document.getElementById('pos-product-list');
+        const posCartItemsDiv = document.getElementById('pos-cart-items');
+        const posCartTotalSpan = document.getElementById('pos-cart-total');
+        const posClearCartButton = document.getElementById('pos-clear-cart-button');
+        const posCheckoutButton = document.getElementById('pos-checkout-button');
+
+        // Opciones de Tienda/Feria
+        const generateStoreSummaryButton = document.getElementById('generate-store-summary-button');
+        const resetStoreSalesButton = document.getElementById('reset-store-sales-button');
+
+        // Modales
+        const messageModal = document.getElementById('message-modal');
+        const messageModalTitle = document.getElementById('message-modal-title');
+        const messageModalText = document.getElementById('message-modal-text');
+        const messageModalClose = document.getElementById('message-modal-close');
+
+        const editFabProductModal = document.getElementById('edit-fab-product-modal');
+        const editFabProductIdInput = document.getElementById('edit-fab-product-id');
+        const editFabProductNameInput = document.getElementById('edit-fab-product-name');
+        const editFabProductPriceInput = document.getElementById('edit-fab-product-price');
+        const editFabProductImageInput = document.getElementById('edit-fab-product-image-input');
+        const editFabProductImagePreview = document.getElementById('edit-fab-product-image-preview');
+        const removeEditFabImageButton = document.getElementById('remove-edit-fab-image-button');
+        const addStockQuantityInput = document.getElementById('add-stock-quantity');
+        const addStockDeductPlasticCheck = document.getElementById('add-stock-deduct-plastic-check');
+        const addStockPlasticDetailsDiv = document.getElementById('add-stock-plastic-details');
+        const addStockPlasticTypeSelect = document.getElementById('add-stock-plastic-type-select');
+        const addStockPlasticGramsUnitInput = document.getElementById('add-stock-plastic-grams-unit');
+        const saveEditFabButton = document.getElementById('save-edit-fab-button');
+        const cancelEditFabButton = document.getElementById('cancel-edit-fab-button');
+
+        const editPlasticStockModal = document.getElementById('edit-plastic-stock-modal');
+        const editPlasticIdInput = document.getElementById('edit-plastic-id');
+        const editingPlasticNameSpan = document.getElementById('editing-plastic-name');
+        const updatePlasticQuantityInput = document.getElementById('update-plastic-quantity');
+        const saveUpdatePlasticButton = document.getElementById('save-update-plastic-button');
+        const cancelUpdatePlasticButton = document.getElementById('cancel-update-plastic-button');
+
+
+        // Estado de la Aplicación
+        let plastics = []; // { id, name, quantity (grams) }
+        let products = []; // { id, name, price, stock, image, plasticCostPerUnit: { typeId, amount, name } (opcional) }
+        let cart = []; // { ...productData, cartItemId (unique for this cart instance) }
+        let totalSales = 0;
+        let completedSales = []; // { id, items: [...cart], totalAmount, timestamp }
+
+        let currentFabProductImageBase64 = null;
+        let editingFabProductImageBase64 = null;
+
+
+        // --- Funciones Auxiliares para Imágenes ---
+        function handleImagePreview(fileInput, previewElement, base64VarSetter) {
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewElement.src = e.target.result;
+                    previewElement.classList.remove('hidden');
+                    base64VarSetter(e.target.result);
+                }
+                reader.readAsDataURL(file);
+            } else {
+                previewElement.classList.add('hidden');
+                previewElement.src = '';
+                base64VarSetter(null);
+            }
+        }
+        fabProductImageInput.addEventListener('change', () => handleImagePreview(fabProductImageInput, fabProductImagePreview, (val) => currentFabProductImageBase64 = val));
+        editFabProductImageInput.addEventListener('change', () => handleImagePreview(editFabProductImageInput, editFabProductImagePreview, (val) => {
+            editingFabProductImageBase64 = val;
+            removeEditFabImageButton.classList.toggle('hidden', !val);
+        }));
+
+        removeEditFabImageButton.addEventListener('click', () => {
+            editFabProductImagePreview.src = '';
+            editFabProductImagePreview.classList.add('hidden');
+            editFabProductImageInput.value = '';
+            editingFabProductImageBase64 = null;
+            removeEditFabImageButton.classList.add('hidden');
+        });
+
+
+        // --- Funciones de Modales y Mensajes ---
+        function showModal(modalElement) {
+            modalElement.classList.add('active');
+        }
+
+        function hideModal(modalElement) {
+            modalElement.classList.remove('active');
+            // Resetear campos de imagen y previews al cerrar modales
+            fabProductImagePreview.classList.add('hidden');
+            fabProductImagePreview.src = '';
+            fabProductImageInput.value = '';
+            currentFabProductImageBase64 = null;
+
+            editFabProductImagePreview.classList.add('hidden');
+            editFabProductImagePreview.src = '';
+            editFabProductImageInput.value = '';
+            editingFabProductImageBase64 = null; // Ensure this is reset
+            removeEditFabImageButton.classList.add('hidden');
+
+            // Resetear campos de "Agregar Stock" en modal de edición
+            addStockQuantityInput.value = '0';
+            addStockDeductPlasticCheck.checked = false;
+            addStockPlasticDetailsDiv.classList.add('hidden');
+            addStockPlasticTypeSelect.value = '';
+            addStockPlasticGramsUnitInput.value = '';
+        }
+
+        function showMessage(title, textContent, isHtml = false) {
+            messageModalTitle.textContent = title;
+            messageModalText.innerHTML = isHtml ? textContent : `<p class="text-secondary">${textContent.replace(/\n/g, '<br>')}</p>`;
+            showModal(messageModal);
+        }
+        messageModalClose.addEventListener('click', () => hideModal(messageModal));
+        cancelEditFabButton.addEventListener('click', () => hideModal(editFabProductModal));
+        cancelUpdatePlasticButton.addEventListener('click', () => hideModal(editPlasticStockModal));
+
+        // --- Lógica de Pestañas ---
+        function setActiveTab(activeButton, activeContent) {
+            [tabInventarioButton, tabPosButton].forEach(b => {
+                b.classList.remove('tab-active-text', 'tab-active-border', 'border-b-2');
+                b.classList.add('text-gray-400');
+            });
+            activeButton.classList.add('tab-active-text', 'tab-active-border', 'border-b-2');
+            activeButton.classList.remove('text-gray-400');
+            [contentInventario, contentPos].forEach(c => c.classList.remove('active'));
+            activeContent.classList.add('active');
+            localStorage.setItem('activeStoreTab', activeButton.id);
+        }
+
+        // --- Gestión de Materia Prima (Plástico) ---
+        function renderPlasticStock() {
+            plasticStockListDiv.innerHTML = '';
+            if (plastics.length === 0) {
+                plasticStockListDiv.innerHTML = '<p class="text-secondary text-sm">No hay plásticos registrados.</p>';
+            } else {
+                plastics.forEach(p => {
+                    const div = document.createElement('div');
+                    div.className = 'card-bg p-3 rounded-md shadow flex justify-between items-center';
+                    div.innerHTML = `
+                        <div>
+                            <p class="font-medium text-main">${p.name}</p>
+                            <p class="text-sm text-blue-400">${p.quantity.toLocaleString()} gramos</p>
+                        </div>
+                        <div>
+                            <button data-id="${p.id}" class="edit-plastic-stock-button text-yellow-400 hover:text-yellow-300 text-xs font-medium p-1">Actualizar Stock</button>
+                            <button data-id="${p.id}" class="delete-plastic-button text-red-400 hover:text-red-300 text-xs font-medium p-1 ml-1">Eliminar</button>
+                        </div>
+                    `;
+                    plasticStockListDiv.appendChild(div);
+                });
+            }
+            populatePlasticSelects();
+            document.querySelectorAll('.edit-plastic-stock-button').forEach(btn => btn.addEventListener('click', (e) => openEditPlasticStockModal(e.target.dataset.id)));
+            document.querySelectorAll('.delete-plastic-button').forEach(btn => btn.addEventListener('click', (e) => deletePlasticType(e.target.dataset.id)));
+        }
+
+        function addPlasticType() {
+            const name = plasticNameInput.value.trim();
+            const quantity = parseInt(plasticQuantityInput.value);
+            if (!name || isNaN(quantity) || quantity < 0) {
+                showMessage("Error", "Nombre y cantidad válida (positiva) son requeridos para el plástico.");
+                return;
+            }
+            if (plastics.find(p => p.name.toLowerCase() === name.toLowerCase())) {
+                showMessage("Error", "Ya existe un plástico con ese nombre.");
+                return;
+            }
+            plastics.push({
+                id: `plastic_${Date.now()}`,
+                name,
+                quantity
+            });
+            savePlasticsToLocalStorage();
+            renderPlasticStock();
+            plasticNameInput.value = '';
+            plasticQuantityInput.value = '';
+            showMessage("Éxito", `Plástico "${name}" agregado con ${quantity}g.`);
+        }
+        addPlasticButton.addEventListener('click', addPlasticType);
+
+        function openEditPlasticStockModal(plasticId) {
+            const plastic = plastics.find(p => p.id === plasticId);
+            if (plastic) {
+                editPlasticIdInput.value = plastic.id;
+                editingPlasticNameSpan.textContent = plastic.name;
+                updatePlasticQuantityInput.value = plastic.quantity;
+                showModal(editPlasticStockModal);
+            }
+        }
+
+        saveUpdatePlasticButton.addEventListener('click', () => {
+            const plasticId = editPlasticIdInput.value;
+            const newQuantity = parseInt(updatePlasticQuantityInput.value);
+            if (isNaN(newQuantity) || newQuantity < 0) {
+                showMessage("Error", "La nueva cantidad debe ser un número no negativo.");
+                return;
+            }
+            const plastic = plastics.find(p => p.id === plasticId);
+            if (plastic) {
+                plastic.quantity = newQuantity;
+                savePlasticsToLocalStorage();
+                renderPlasticStock();
+                hideModal(editPlasticStockModal);
+                showMessage("Éxito", `Stock de "${plastic.name}" actualizado a ${newQuantity}g.`);
+            }
+        });
+
+        function deletePlasticType(plasticId) {
+            const isUsed = products.some(p => p.plasticCostPerUnit && p.plasticCostPerUnit.typeId === plasticId);
+            if (isUsed) {
+                showMessage("Error al Eliminar", "Este plástico no puede ser eliminado porque está referenciado en uno o más productos fabricados. Considere editar esos productos primero.");
+                return;
+            }
+            if (window.confirm("¿Seguro que deseas eliminar este tipo de plástico? Esta acción no se puede deshacer.")) {
+                plastics = plastics.filter(p => p.id !== plasticId);
+                savePlasticsToLocalStorage();
+                renderPlasticStock();
+                showMessage("Plástico Eliminado", "El tipo de plástico ha sido eliminado.");
+            }
+        }
+
+
+        function populatePlasticSelects() {
+            const selects = [fabPlasticTypeSelect, addStockPlasticTypeSelect];
+            selects.forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Seleccione un plástico...</option>';
+                plastics.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.id;
+                    option.textContent = `${p.name} (${p.quantity}g disp.)`;
+                    select.appendChild(option);
+                });
+                if (plastics.find(p => p.id === currentValue)) {
+                    select.value = currentValue;
+                }
+            });
+        }
+
+        // --- Gestión de Productos Fabricados ---
+        fabDeductPlasticCheck.addEventListener('change', () => fabPlasticDetailsDiv.classList.toggle('hidden', !fabDeductPlasticCheck.checked));
+        addStockDeductPlasticCheck.addEventListener('change', () => addStockPlasticDetailsDiv.classList.toggle('hidden', !addStockDeductPlasticCheck.checked));
+
+        function addFabProduct() {
+            const name = fabProductNameInput.value.trim();
+            const price = parseFloat(fabProductPriceInput.value);
+            const quantityManufactured = parseInt(fabProductQuantityInput.value);
+
+            if (!name || isNaN(price) || price < 0 || isNaN(quantityManufactured) || quantityManufactured <= 0) {
+                showMessage("Error", "Nombre, precio válido, y cantidad fabricada (positiva) son requeridos.");
+                return;
+            }
+
+            let plasticCostPerUnit = null;
+            let totalPlasticNeeded = 0;
+            let selectedPlastic = null;
+
+            if (fabDeductPlasticCheck.checked) {
+                const plasticTypeId = fabPlasticTypeSelect.value;
+                const gramsPerUnit = parseFloat(fabPlasticGramsUnitInput.value);
+                if (!plasticTypeId || isNaN(gramsPerUnit) || gramsPerUnit <= 0) {
+                    showMessage("Error", "Si descuenta plástico, seleccione tipo y especifique gramos por unidad válidos.");
+                    return;
+                }
+                selectedPlastic = plastics.find(p => p.id === plasticTypeId);
+                if (!selectedPlastic) {
+                    showMessage("Error", "Tipo de plástico seleccionado no válido.");
+                    return;
+                }
+                totalPlasticNeeded = gramsPerUnit * quantityManufactured;
+                if (selectedPlastic.quantity < totalPlasticNeeded) {
+                    showMessage("Error", `Stock insuficiente de ${selectedPlastic.name}. Necesita ${totalPlasticNeeded}g, disponibles ${selectedPlastic.quantity}g.`);
+                    return;
+                }
+                plasticCostPerUnit = {
+                    typeId: plasticTypeId,
+                    amount: gramsPerUnit,
+                    name: selectedPlastic.name
+                };
+            }
+
+            if (selectedPlastic && totalPlasticNeeded > 0) {
+                selectedPlastic.quantity -= totalPlasticNeeded;
+                savePlasticsToLocalStorage();
+            }
+
+            const existingProduct = products.find(p => p.name.toLowerCase() === name.toLowerCase());
+            if (existingProduct) {
+                existingProduct.stock += quantityManufactured;
+                if (plasticCostPerUnit) { // Update plastic cost if new info provided
+                    existingProduct.plasticCostPerUnit = plasticCostPerUnit;
+                }
+                if (currentFabProductImageBase64 !== null) { // Check if a new image was selected (null means no change or cleared)
+                    existingProduct.image = currentFabProductImageBase64;
+                }
+            } else {
+                products.push({
+                    id: `prod_${Date.now()}`,
+                    name,
+                    price,
+                    stock: quantityManufactured,
+                    image: currentFabProductImageBase64,
+                    plasticCostPerUnit
+                });
+            }
+
+            saveProductsToLocalStorage();
+            renderAll();
+
+            showMessage("Éxito", `Producto "${name}" (${quantityManufactured} uds) agregado/actualizado en inventario.`);
+            fabProductNameInput.value = '';
+            fabProductPriceInput.value = '';
+            fabProductQuantityInput.value = '';
+            fabProductImageInput.value = '';
+            fabProductImagePreview.classList.add('hidden');
+            fabProductImagePreview.src = '';
+            currentFabProductImageBase64 = null;
+            fabDeductPlasticCheck.checked = false;
+            fabPlasticDetailsDiv.classList.add('hidden');
+            fabPlasticTypeSelect.value = '';
+            fabPlasticGramsUnitInput.value = '';
+        }
+        addFabProductButton.addEventListener('click', addFabProduct);
+
+        function renderFabProductList() {
+            fabProductListDiv.innerHTML = '';
+            if (products.length === 0) {
+                fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">No hay productos fabricados.</p>';
+            } else {
+                products.forEach(p => {
+                    const div = document.createElement('div');
+                    div.className = 'card-bg p-3 rounded-lg shadow-md flex items-center';
+                    let imageHtml = p.image ? `<img src="${p.image}" alt="${p.name}" class="product-image-preview mr-3">` : `<div class="product-image-placeholder mr-3"><span>Sin<br>Img</span></div>`;
+                    let plasticInfo = '';
+                    if (p.plasticCostPerUnit) {
+                        const plasticType = plastics.find(pl => pl.id === p.plasticCostPerUnit.typeId);
+                        const plasticTypeName = plasticType ? plasticType.name : (p.plasticCostPerUnit.name || 'Desconocido'); // Fallback to stored name
+                        plasticInfo = `<p class="text-xs text-gray-500">Usa: ${p.plasticCostPerUnit.amount}g de ${plasticTypeName}</p>`;
+                    }
+
+                    div.innerHTML = `
+                        ${imageHtml}
+                        <div class="flex-grow">
+                            <p class="font-medium text-main">${p.name}</p>
+                            <p class="text-sm text-blue-400 font-semibold">ARS ${p.price.toFixed(2)}</p>
+                            <p class="text-main">Stock: ${p.stock} uds.</p>
+                            ${plasticInfo}
+                        </div>
+                        <div class="flex flex-col space-y-1 flex-shrink-0 ml-2">
+                            <button data-id="${p.id}" class="edit-fab-product-button text-yellow-400 hover:text-yellow-300 text-xs font-medium p-1 w-full text-right">Modificar / Agregar Stock</button>
+                            <button data-id="${p.id}" class="delete-fab-product-button text-red-400 hover:text-red-300 text-xs font-medium p-1 w-full text-right">Eliminar Producto</button>
+                        </div>
+                    `;
+                    fabProductListDiv.appendChild(div);
+                });
+            }
+            document.querySelectorAll('.edit-fab-product-button').forEach(btn => btn.addEventListener('click', (e) => openEditFabProductModal(e.target.dataset.id)));
+            document.querySelectorAll('.delete-fab-product-button').forEach(btn => btn.addEventListener('click', (e) => deleteFabProduct(e.target.dataset.id)));
+        }
+
+        function openEditFabProductModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                // hideModal(editFabProductModal); // Not needed here, as hideModal is called on cancel/save
+                editFabProductIdInput.value = product.id;
+                editFabProductNameInput.value = product.name;
+                editFabProductPriceInput.value = product.price.toFixed(2);
+                addStockQuantityInput.value = "0";
+
+                editingFabProductImageBase64 = product.image || null; // Set current image for editing
+                if (product.image) {
+                    editFabProductImagePreview.src = product.image;
+                    editFabProductImagePreview.classList.remove('hidden');
+                    removeEditFabImageButton.classList.remove('hidden');
+                } else {
+                    editFabProductImagePreview.src = '';
+                    editFabProductImagePreview.classList.add('hidden');
+                    removeEditFabImageButton.classList.add('hidden');
+                }
+                editFabProductImageInput.value = ''; // Clear file input
+
+                addStockDeductPlasticCheck.checked = false;
+                addStockPlasticDetailsDiv.classList.add('hidden');
+                addStockPlasticTypeSelect.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.typeId : '';
+                addStockPlasticGramsUnitInput.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.amount : '';
+
+                showModal(editFabProductModal);
+            }
+        }
+
+        saveEditFabButton.addEventListener('click', () => {
+            const productId = editFabProductIdInput.value;
+            const product = products.find(p => p.id === productId);
+            if (!product) {
+                showMessage("Error", "Producto no encontrado.");
+                return;
+            }
+
+            const newName = editFabProductNameInput.value.trim();
+            const newPrice = parseFloat(editFabProductPriceInput.value);
+
+            if (!newName || isNaN(newPrice) || newPrice < 0) {
+                showMessage("Error", "Nombre y precio válido son requeridos.");
+                return;
+            }
+            product.name = newName;
+            product.price = newPrice;
+
+            // editingFabProductImageBase64 will hold the new image if selected, or null if removed, or product.image if unchanged via input
+            // The handleImagePreview and remove button already manage editingFabProductImageBase64
+            product.image = editingFabProductImageBase64;
+
+
+            const additionalQuantity = parseInt(addStockQuantityInput.value);
+            if (isNaN(additionalQuantity) || additionalQuantity < 0) {
+                showMessage("Error", "Cantidad adicional a fabricar debe ser un número no negativo.");
+                return;
+            }
+
+            let modifiedPlasticStock = false;
+
+            if (additionalQuantity > 0) {
+                let plasticCostForNewBatch = null;
+                let totalPlasticForNewBatch = 0;
+                let selectedPlasticForNewBatch = null;
+
+                if (addStockDeductPlasticCheck.checked) {
+                    const plasticTypeId = addStockPlasticTypeSelect.value;
+                    const gramsPerUnit = parseFloat(addStockPlasticGramsUnitInput.value);
+                    if (!plasticTypeId || isNaN(gramsPerUnit) || gramsPerUnit <= 0) {
+                        showMessage("Error", "Para el nuevo lote, si descuenta plástico, seleccione tipo y gramos válidos.");
+                        return;
+                    }
+                    selectedPlasticForNewBatch = plastics.find(p => p.id === plasticTypeId);
+                    if (!selectedPlasticForNewBatch) {
+                        showMessage("Error", "Tipo de plástico para nuevo lote no válido.");
+                        return;
+                    }
+                    totalPlasticForNewBatch = gramsPerUnit * additionalQuantity;
+                    if (selectedPlasticForNewBatch.quantity < totalPlasticForNewBatch) {
+                        showMessage("Error", `Stock insuficiente de ${selectedPlasticForNewBatch.name} para el nuevo lote. Necesita ${totalPlasticForNewBatch}g, disponibles ${selectedPlasticForNewBatch.quantity}g.`);
+                        return;
+                    }
+                    plasticCostForNewBatch = {
+                        typeId: plasticTypeId,
+                        amount: gramsPerUnit,
+                        name: selectedPlasticForNewBatch.name
+                    };
+                }
+
+                if (selectedPlasticForNewBatch && totalPlasticForNewBatch > 0) {
+                    selectedPlasticForNewBatch.quantity -= totalPlasticForNewBatch;
+                    modifiedPlasticStock = true;
+                }
+                product.stock += additionalQuantity;
+                if (plasticCostForNewBatch) {
+                    product.plasticCostPerUnit = plasticCostForNewBatch;
+                }
+            }
+
+            saveProductsToLocalStorage();
+            if (modifiedPlasticStock) savePlasticsToLocalStorage();
+
+            renderAll();
+            hideModal(editFabProductModal);
+            showMessage("Éxito", `Producto "${product.name}" actualizado. Stock total: ${product.stock}.`);
+        });
+
+        function deleteFabProduct(productId) {
+            if (window.confirm("¿Seguro que deseas eliminar este producto fabricado del inventario? Esta acción no se puede deshacer.")) {
+                products = products.filter(p => p.id !== productId);
+                saveProductsToLocalStorage();
+                renderAll();
+                showMessage("Producto Eliminado", "El producto fabricado ha sido eliminado del inventario.");
+            }
+        }
+
+
+        // --- Lógica del Punto de Venta (POS) ---
+        function renderProductsForSalePOS() {
+            posProductListDiv.innerHTML = '';
+            const availableProducts = products.filter(p => p.stock > 0);
+            if (availableProducts.length === 0) {
+                posProductListDiv.innerHTML = '<p class="text-secondary text-sm col-span-full">No hay productos disponibles para la venta.</p>';
+                return;
+            }
+            availableProducts.forEach(p => {
+                const button = document.createElement('button');
+                button.className = `font-semibold rounded-lg shadow-md transition-colors flex flex-col items-center justify-between overflow-hidden card-bg hover:ring-2 hover:ring-blue-500`;
+                let imageHtml = p.image ? `<img src="${p.image}" alt="${p.name}" class="product-image-sales">` : `<div class="product-image-sales-placeholder"><span>Sin Imagen</span></div>`;
+                const textContainerClass = p.image ? 'p-2' : 'p-2 flex-grow flex flex-col justify-center';
+                button.innerHTML = `
+                    ${imageHtml}
+                    <div class="${textContainerClass} w-full">
+                        <span class="text-sm text-main block truncate">${p.name}</span>
+                        <span class="text-xs text-blue-400 mt-1 block">ARS ${p.price.toFixed(2)}</span>
+                        <span class="text-xs text-gray-400 mt-1 block">Disp: ${p.stock}</span>
+                    </div>
+                `;
+                button.addEventListener('click', () => addProductToCartPOS(p.id));
+                posProductListDiv.appendChild(button);
+            });
+        }
+
+        function addProductToCartPOS(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product && product.stock > 0) {
+                cart.push({...product,
+                    cartItemId: `cart_${Date.now()}_${Math.random().toString(36).substr(2,5)}`
+                });
+                product.stock--;
+                saveProductsToLocalStorage();
+                renderCartPOS();
+                renderProductsForSalePOS();
+            }
+        }
+
+        function removeProductFromCartPOS(cartItemId) {
+            const cartItemIndex = cart.findIndex(item => item.cartItemId === cartItemId);
+            if (cartItemIndex > -1) {
+                const removedItem = cart[cartItemIndex];
+                const productInInventory = products.find(p => p.id === removedItem.id);
+                if (productInInventory) {
+                    productInInventory.stock++;
+                    saveProductsToLocalStorage();
+                }
+                cart.splice(cartItemIndex, 1);
+                renderCartPOS();
+                renderProductsForSalePOS();
+            }
+        }
+
+        function renderCartPOS() {
+            posCartItemsDiv.innerHTML = '';
+            let currentTotal = 0;
+            if (cart.length === 0) {
+                posCartItemsDiv.innerHTML = '<p class="text-secondary text-sm">El carrito está vacío.</p>';
+            } else {
+                cart.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between items-center py-1';
+                    div.innerHTML = `
+                        <span class="text-sm text-label">${item.name}</span>
+                        <div class="flex items-center">
+                            <span class="text-sm text-main font-medium mr-2">ARS ${item.price.toFixed(2)}</span>
+                            <button data-cart-item-id="${item.cartItemId}" class="pos-remove-from-cart-button text-red-400 hover:text-red-300 text-lg p-0 leading-none">&times;</button>
+                        </div>
+                    `;
+                    posCartItemsDiv.appendChild(div);
+                    currentTotal += item.price;
+                });
+            }
+            posCartTotalSpan.textContent = `ARS ${currentTotal.toFixed(2)}`;
+            document.querySelectorAll('.pos-remove-from-cart-button').forEach(btn => btn.addEventListener('click', (e) => removeProductFromCartPOS(e.target.dataset.cartItemId)));
+        }
+
+        posClearCartButton.addEventListener('click', () => {
+            if (cart.length > 0) {
+                cart.forEach(cartItem => {
+                    const productInInventory = products.find(p => p.id === cartItem.id);
+                    if (productInInventory) productInInventory.stock++;
+                });
+                cart = [];
+                saveProductsToLocalStorage();
+                renderAll();
+                showMessage("Carrito Vacío", "El carrito ha sido vaciado y el stock restaurado.");
+            }
+        });
+
+        posCheckoutButton.addEventListener('click', () => {
+            if (cart.length === 0) {
+                showMessage("Venta Vacía", "No hay productos en el carrito.");
+                return;
+            }
+            const saleAmount = cart.reduce((sum, item) => sum + item.price, 0);
+            totalSales += saleAmount;
+            completedSales.push({
+                id: `storeSale_${Date.now()}`,
+                items: [...cart],
+                totalAmount: saleAmount,
+                timestamp: new Date().toISOString()
+            });
+
+            saveTotalSalesToLocalStorage();
+            saveCompletedSalesToLocalStorage();
+            // Products stock already updated and saved by addProductToCartPOS
+
+            showMessage("Venta Finalizada", `Venta de ARS ${saleAmount.toFixed(2)} completada. Total del día: ARS ${totalSales.toFixed(2)}.`);
+            cart = [];
+            renderAll();
+        });
+
+        // --- Opciones de Tienda (Resumen, Reinicio) ---
+        resetStoreSalesButton.addEventListener('click', () => {
+            // Updated confirmation message and logic
+            if (window.confirm("¿Empezar un nuevo día de caja? Se borrará el total y detalle de ventas, y se vaciará el carrito actual. El inventario de productos y plásticos no se modificará.")) {
+                totalSales = 0;
+                completedSales = [];
+                localStorage.removeItem('posTotalSales');
+                localStorage.removeItem('posCompletedSales');
+
+                // Empty the cart without returning stock to inventory
+                cart = [];
+                // No need to call saveProductsToLocalStorage() here as stock is not changing.
+
+                renderAll();
+                showMessage('Nuevo Día Iniciado', 'Los contadores de ventas y el carrito han sido reiniciados. El stock de productos se mantiene.');
+            }
+        });
+        generateStoreSummaryButton.addEventListener('click', () => {
+            if (completedSales.length === 0) {
+                showMessage('Resumen de Ventas', 'No hay ventas registradas para este período.');
+                return;
+            }
+            const productSummary = {};
+            completedSales.forEach(sale => sale.items.forEach(item => {
+                productSummary[item.id] = productSummary[item.id] || {
+                    name: item.name,
+                    quantity: 0,
+                    totalRevenue: 0
+                };
+                productSummary[item.id].quantity++;
+                productSummary[item.id].totalRevenue += item.price;
+            }));
+            let summaryText = `<pre><strong>Resumen de Ventas del Día</strong>\n\nTotal Transacciones: ${completedSales.length}\nIngresos Totales: ARS ${totalSales.toFixed(2)}\n\n<strong>Detalle por Producto:</strong>\n`;
+            Object.values(productSummary).forEach(p => {
+                summaryText += `- ${p.name}:\n  Cantidad: ${p.quantity}\n  Ingresos: ARS ${p.totalRevenue.toFixed(2)}\n`;
+            });
+            if (Object.keys(productSummary).length === 0) summaryText += `No se vendieron productos específicos.\n`;
+            summaryText += `</pre>`;
+            showMessage('Resumen de Ventas', summaryText, true);
+        });
+
+
+        // --- LocalStorage Functions ---
+        function savePlasticsToLocalStorage() {
+            localStorage.setItem('posPlastics', JSON.stringify(plastics));
+        }
+
+        function loadPlasticsFromLocalStorage() {
+            const storedPlastics = localStorage.getItem('posPlastics');
+            plastics = storedPlastics ? JSON.parse(storedPlastics) : [];
+        }
+
+        function saveProductsToLocalStorage() {
+            localStorage.setItem('posProducts', JSON.stringify(products));
+        }
+
+        function loadProductsFromLocalStorage() {
+            const storedProducts = localStorage.getItem('posProducts');
+            products = storedProducts ? JSON.parse(storedProducts) : [];
+        }
+
+        function saveTotalSalesToLocalStorage() {
+            localStorage.setItem('posTotalSales', JSON.stringify(totalSales));
+        }
+
+        function loadTotalSalesFromLocalStorage() {
+            const storedSales = localStorage.getItem('posTotalSales');
+            totalSales = storedSales ? JSON.parse(storedSales) : 0;
+        }
+
+        function saveCompletedSalesToLocalStorage() {
+            localStorage.setItem('posCompletedSales', JSON.stringify(completedSales));
+        }
+
+        function loadCompletedSalesFromLocalStorage() {
+            const storedCompletedSales = localStorage.getItem('posCompletedSales');
+            completedSales = storedCompletedSales ? JSON.parse(storedCompletedSales) : [];
+        }
+
+        // --- Render Total Sales (placeholder, as it's mainly shown in summary) ---
+        function renderTotalSales() {
+            // This function is called by renderAll. 
+            // Currently, totalSales is primarily displayed in the summary modal.
+            // If you add a dedicated display element for total sales on the main UI, update it here.
+            // console.log("Total sales updated in state:", totalSales);
+        }
+
+        // --- Inicialización y Renderizado Global ---
+        function renderAll() {
+            renderPlasticStock();
+            renderFabProductList();
+            renderProductsForSalePOS();
+            renderCartPOS();
+            renderTotalSales(); // Now defined
+        }
+
+        function initializeApp() {
+            loadPlasticsFromLocalStorage();
+            loadProductsFromLocalStorage();
+            loadTotalSalesFromLocalStorage();
+            loadCompletedSalesFromLocalStorage();
+            renderAll();
+            const activeTabId = localStorage.getItem('activeStoreTab') || 'tab-inventario';
+            const buttonToActivate = document.getElementById(activeTabId) || tabInventarioButton;
+            const contentToActivate = activeTabId === 'tab-pos' ? contentPos : contentInventario;
+            setActiveTab(buttonToActivate, contentToActivate);
+        }
+
+        // Event Listeners para Pestañas
+        tabInventarioButton.addEventListener('click', () => setActiveTab(tabInventarioButton, contentInventario));
+        tabPosButton.addEventListener('click', () => {
+            setActiveTab(tabPosButton, contentPos);
+            renderProductsForSalePOS();
+        });
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+
+</html>
