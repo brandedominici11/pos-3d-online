@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -371,7 +371,8 @@
         // Importaciones de Firebase (versión 11.8.1)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, writeBatch, getDocs, terminate, clearPersistence } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+        // Removed clearPersistence and terminate from this import as they were causing issues and not actively used.
+        import { getFirestore, collection, doc, addDoc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
 
         // Configuración de Firebase
@@ -695,8 +696,6 @@
                 return;
             }
             
-            // TODO: Implement a proper confirmation modal here.
-            // For now, proceeding with a simple message as a placeholder.
             const confirmDelete = window.confirm(`¿Seguro que deseas eliminar el plástico "${plasticToDelete.name}"? Esta acción no se puede deshacer.`);
             if (confirmDelete) {
                 try {
@@ -715,7 +714,7 @@
             selects.forEach(select => {
                 const currentValue = select.value;
                 select.innerHTML = '<option value="" class="bg-slate-700">Seleccione un plástico...</option>';
-                if (userId && plastics.length > 0) { // Only populate if logged in and plastics exist
+                if (userId && plastics.length > 0) { 
                     const sortedPlastics = [...plastics].sort((a, b) => a.name.localeCompare(b.name));
                     sortedPlastics.forEach(p => {
                         const option = document.createElement('option');
@@ -730,7 +729,7 @@
                         select.value = "";
                     }
                 } else {
-                     select.value = ""; // Ensure select is cleared if no user or no plastics
+                     select.value = ""; 
                 }
             });
         }
@@ -967,7 +966,6 @@
             const productToDelete = products.find(p => p.id === productId);
             if (!productToDelete) return;
 
-            // TODO: Implement a proper confirmation modal here.
             const confirmDelete = window.confirm(`¿Seguro que deseas eliminar el producto "${productToDelete.name}" del inventario? Esta acción no se puede deshacer.`);
             if (confirmDelete) {
                 try {
@@ -1134,11 +1132,10 @@
         resetStoreSalesButton.addEventListener('click', async () => {
             if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión."); return; }
             
-            // TODO: Implement a proper confirmation modal here.
             const confirmReset = window.confirm("¿Empezar un nuevo día de caja? Se borrarán ventas y carrito. Esta acción no se puede deshacer.");
             if (confirmReset) {
                 totalSales = 0;
-                localStorage.removeItem(`posTotalSales_${userId}`); // User-specific local storage
+                localStorage.removeItem(`posTotalSales_${userId}`); 
                 
                 try {
                     const salesQuery = query(completedSalesCollectionRef());
@@ -1185,7 +1182,7 @@
                 summaryText += `- ${p.name}:\n  Cantidad: ${p.quantity}\n  Ingresos: ARS ${p.totalRevenue.toFixed(2)}\n`;
             });
             if (Object.keys(productSummary).length === 0) summaryText += `No se vendieron productos específicos.\n`;
-            summaryText += `\nTotal Ventas (local): ARS ${totalSales.toFixed(2)}</pre>`; // totalSales is now user-specific
+            summaryText += `\nTotal Ventas (local): ARS ${totalSales.toFixed(2)}</pre>`; 
             showMessage('Resumen de Ventas', summaryText, true);
         });
 
@@ -1200,7 +1197,7 @@
                 const storedSales = localStorage.getItem(`posTotalSales_${userId}`);
                 totalSales = storedSales ? JSON.parse(storedSales) : 0;
             } else {
-                totalSales = 0; // Reset if no user
+                totalSales = 0; 
             }
         }
         
@@ -1227,14 +1224,13 @@
             cart = [];
             completedSales = [];
             totalSales = 0;
-            renderAll(); // Update UI to reflect cleared data
+            renderAll(); 
         }
 
         // --- Carga de Datos desde Firestore con onSnapshot ---
         function setupFirestoreListeners() {
             if (!userId) {
                 console.warn("UserID no disponible. No se pueden configurar listeners de Firestore.");
-                // Clear data and UI if user logs out or is not available
                 clearLocalData();
                 plasticStockListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar plásticos.</p>';
                 fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar productos.</p>';
@@ -1245,7 +1241,6 @@
             loadingIndicator.textContent = "Cargando datos...";
             loadingIndicator.classList.remove('hidden');
 
-            // Detach any existing listeners before attaching new ones
             unsubscribePlastics();
             unsubscribeProducts();
             unsubscribeSales();
@@ -1275,8 +1270,8 @@
             const salesQuery = query(completedSalesCollectionRef());
             unsubscribeSales = onSnapshot(salesQuery, (snapshot) => {
                 completedSales = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                loadTotalSalesFromLocalStorage(); // Recalculate based on potentially new sales for summary
-                renderDailySalesDisplay(); // Update daily sales display
+                loadTotalSalesFromLocalStorage(); 
+                renderDailySalesDisplay(); 
                 loadingIndicator.classList.add('hidden');
             }, (error) => {
                 console.error("Error escuchando cambios en ventas completadas:", error);
@@ -1299,7 +1294,7 @@
                     console.log("Usuario autenticado:", userId, user.email);
                     loadingIndicator.textContent = "Cargando datos...";
                     setupFirestoreListeners();
-                    loadTotalSalesFromLocalStorage(); // Load sales for this user
+                    loadTotalSalesFromLocalStorage(); 
                     renderDailySalesDisplay();
                 } else {
                     userId = null;
@@ -1309,20 +1304,15 @@
                     signoutButton.classList.add('hidden');
                     
                     console.log("Usuario no autenticado.");
-                    loadingIndicator.classList.add('hidden'); // Hide loading if no user
-                    clearLocalData(); // Clear data shown in UI
-                     // Display messages for logged-out state
+                    loadingIndicator.classList.add('hidden'); 
+                    clearLocalData(); 
                     plasticStockListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar plásticos.</p>';
                     fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar productos.</p>';
                     posProductListDiv.innerHTML = '<p class="text-secondary text-sm col-span-full">Inicie sesión para ver productos disponibles.</p>';
 
-                    // Detach listeners if user logs out
                     unsubscribePlastics();
                     unsubscribeProducts();
                     unsubscribeSales();
-                    // Optional: Clear Firestore persistence if you want a fully clean slate on logout
-                    // clearPersistence(db).catch(err => console.error("Error clearing persistence", err));
-
                 }
             });
 
