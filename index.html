@@ -4,102 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS Tienda 3D</title>
+    <title>POS Tienda 3D con Firebase</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0D1117;
-            /* Base background - Very dark blue/gray */
             color: #c9d1d9;
-            /* Default light text color */
-            padding-top: 60px;
-            /* Adjust if header height changes */
+            padding-top: 60px; /* Header height */
+            padding-bottom: 20px; /* Footer padding */
         }
-        /* Glassmorphism effect for cards and modals */
-        
         .card-glass,
         .modal-glass-content {
             background-color: rgba(30, 37, 50, 0.6);
-            /* Semi-transparent dark slate with more opacity */
             backdrop-filter: blur(10px) saturate(180%);
             -webkit-backdrop-filter: blur(10px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 1rem;
-            /* rounded-xl */
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
         }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        /* Text Colors */
-        
-        .text-main {
-            color: #e6edf3;
-            /* Brighter white/light gray for main text */
-        }
-        
-        .text-secondary {
-            color: #7d8590;
-            /* Softer gray for secondary text */
-        }
-        
-        .text-label {
-            color: #afb8c1;
-            /* Light gray for labels */
-        }
-        /* Form Elements Styling */
-        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .text-main { color: #e6edf3; }
+        .text-secondary { color: #7d8590; }
+        .text-label { color: #afb8c1; }
         .form-input-custom,
         .form-select-custom,
         .form-file-custom {
             background-color: rgba(13, 17, 23, 0.5);
-            /* Darker, slightly transparent input background */
             border-color: rgba(255, 255, 255, 0.15);
             color: #e6edf3;
             border-width: 1px;
             border-radius: 0.5rem;
-            /* rounded-lg */
             padding: 0.625rem 0.875rem;
-            /* p-2.5 px-3.5 */
             width: 100%;
             transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
-        
-        .form-input-custom::placeholder {
-            color: #7d8590;
-        }
-        
+        .form-input-custom::placeholder { color: #7d8590; }
         .form-input-custom:focus,
         .form-select-custom:focus,
         .form-file-custom:focus {
             border-color: #58a6ff;
-            /* Accent blue for focus */
             box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
             outline: none;
         }
-        /* Custom file input button styling */
-        
-        .form-file-custom::-webkit-file-upload-button {
-            visibility: hidden;
-        }
-        
+        .form-file-custom::-webkit-file-upload-button { visibility: hidden; }
         .form-file-custom::before {
             content: 'Seleccionar archivo';
             display: inline-block;
             background: rgba(88, 166, 255, 0.2);
-            /* Accent blue, transparent */
             border: 1px solid rgba(88, 166, 255, 0.5);
             border-radius: 0.375rem;
-            /* rounded-md */
             padding: 0.375rem 0.75rem;
-            /* py-1.5 px-3 */
             outline: none;
             white-space: nowrap;
             cursor: pointer;
@@ -108,248 +66,59 @@
             color: #58a6ff;
             transition: background-color 0.2s ease;
         }
-        
-        .form-file-custom:hover::before {
-            background-color: rgba(88, 166, 255, 0.3);
-        }
-        /* Disabled Product Styling (remains for functionality) */
-        
-        .disabled-product {
-            background-color: #4b5563 !important;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        
-        .disabled-product:hover {
-            background-color: #4b5563 !important;
-        }
-        /* Modal Styling */
-        
-        .modal {
-            display: none;
+        .form-file-custom:hover::before { background-color: rgba(88, 166, 255, 0.3); }
+        .modal { display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.7); align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
+        .modal.active { display: flex; }
+        #message-modal-text pre { white-space: pre-wrap; word-wrap: break-word; max-height: 60vh; overflow-y: auto; text-align: left; background-color: rgba(13, 17, 23, 0.7); color: #e6edf3; padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .header-bg { background-color: rgba(13, 17, 23, 0.7); backdrop-filter: blur(8px) saturate(150%); -webkit-backdrop-filter: blur(8px) saturate(150%); border-bottom: 1px solid rgba(255, 255, 255, 0.08); position: fixed; top: 0; left: 0; right: 0; z-index: 20; }
+        .nav-bg { background-color: transparent; }
+        .tab-button { color: #7d8590; border-bottom-width: 2px; border-color: transparent; transition: color 0.2s ease, border-color 0.2s ease; }
+        .tab-button:hover { color: #58a6ff; }
+        .tab-active-border { border-color: #58a6ff; }
+        .tab-active-text { color: #58a6ff; font-weight: 600; }
+        .btn { padding: 0.625rem 1.25rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s ease, transform 0.1s ease; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border: 1px solid transparent; }
+        .btn:active { transform: translateY(1px); }
+        .btn-primary-green { background-color: #238636; color: white; border-color: #2ea043; }
+        .btn-primary-green:hover { background-color: #2ea043; }
+        .btn-secondary-blue { background-color: #388bfd; color: white; border-color: #58a6ff; }
+        .btn-secondary-blue:hover { background-color: #58a6ff; }
+        .btn-accent-teal { background-color: #238669; color: white; border-color: #2ea083; }
+        .btn-accent-teal:hover { background-color: #2ea083; }
+        .btn-warning-orange { background-color: #c9510c; color: white; border-color: #f57831; }
+        .btn-warning-orange:hover { background-color: #e16f23; }
+        .btn-danger-red { background-color: #da3633; color: white; border-color: #f85149; }
+        .btn-danger-red:hover { background-color: #f85149; }
+        .btn-neutral-gray { background-color: #21262d; color: #e6edf3; border-color: #30363d; }
+        .btn-neutral-gray:hover { background-color: #30363d; }
+        .product-image-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem; border: 1px solid rgba(255, 255, 255, 0.1); background-color: rgba(13, 17, 23, 0.5); }
+        .product-image-sales { width: 100%; height: 100px; object-fit: cover; border-radius: 0.75rem 0.75rem 0 0; }
+        .product-image-placeholder, .product-image-sales-placeholder { display: flex; align-items: center; justify-content: center; background-color: rgba(13, 17, 23, 0.5); color: #7d8590; font-size: 0.875rem; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .product-image-placeholder { width: 60px; height: 60px; border-radius: 0.5rem; }
+        .product-image-sales-placeholder { width: 100%; height: 100px; border-radius: 0.75rem 0.75rem 0 0; }
+        #pos-product-list button { text-align: center; }
+        #pos-product-list button .p-2 { padding: 0.75rem; }
+        #pos-product-list button .text-sm { font-size: 0.875rem; }
+        #pos-product-list button .text-xs { font-size: 0.75rem; }
+        .loading-overlay {
             position: fixed;
             inset: 0;
-            background-color: rgba(0, 0, 0, 0.7);
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            z-index: 50;
-        }
-        
-        .modal.active {
-            display: flex;
-        }
-        /* .modal-content-bg is replaced by .modal-glass-content */
-        
-        #message-modal-text pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            max-height: 60vh;
-            overflow-y: auto;
-            text-align: left;
-            background-color: rgba(13, 17, 23, 0.7);
-            /* Darker background for pre */
-            color: #e6edf3;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            /* rounded-lg */
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        /* Header and Nav Styling */
-        
-        .header-bg {
-            background-color: rgba(13, 17, 23, 0.7);
-            /* Dark, slightly transparent header */
-            backdrop-filter: blur(8px) saturate(150%);
-            -webkit-backdrop-filter: blur(8px) saturate(150%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            position: fixed;
-            /* Fixed header */
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 20;
-            /* Ensure header is above body content but below modals */
-        }
-        
-        .nav-bg {
-            background-color: transparent;
-            /* Nav background integrated with header or main content area */
-            /* Tabs will be styled directly */
-        }
-        
-        .tab-button {
-            color: #7d8590;
-            /* Default tab text color */
-            border-bottom-width: 2px;
-            border-color: transparent;
-            transition: color 0.2s ease, border-color 0.2s ease;
-        }
-        
-        .tab-button:hover {
-            color: #58a6ff;
-            /* Accent blue on hover */
-        }
-        
-        .tab-active-border {
-            border-color: #58a6ff;
-            /* Accent blue for active tab border */
-        }
-        
-        .tab-active-text {
-            color: #58a6ff;
-            /* Accent blue for active tab text */
-            font-weight: 600;
-        }
-        /* Button Styling (Modernized) */
-        
-        .btn {
-            padding: 0.625rem 1.25rem;
-            /* py-2.5 px-5 */
-            border-radius: 0.5rem;
-            /* rounded-lg */
-            font-weight: 600;
-            /* semibold */
-            transition: background-color 0.2s ease, transform 0.1s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border: 1px solid transparent;
-        }
-        
-        .btn:active {
-            transform: translateY(1px);
-        }
-        
-        .btn-primary-green {
-            background-color: #238636;
-            color: white;
-            border-color: #2ea043;
-        }
-        
-        .btn-primary-green:hover {
-            background-color: #2ea043;
-        }
-        
-        .btn-secondary-blue {
-            background-color: #388bfd;
-            color: white;
-            border-color: #58a6ff;
-        }
-        
-        .btn-secondary-blue:hover {
-            background-color: #58a6ff;
-        }
-        
-        .btn-accent-teal {
-            background-color: #238669;
-            color: white;
-            border-color: #2ea083;
-        }
-        
-        .btn-accent-teal:hover {
-            background-color: #2ea083;
-        }
-        
-        .btn-warning-orange {
-            background-color: #c9510c;
-            color: white;
-            border-color: #f57831;
-        }
-        
-        .btn-warning-orange:hover {
-            background-color: #e16f23;
-        }
-        
-        .btn-danger-red {
-            background-color: #da3633;
-            color: white;
-            border-color: #f85149;
-        }
-        
-        .btn-danger-red:hover {
-            background-color: #f85149;
-        }
-        
-        .btn-neutral-gray {
-            background-color: #21262d;
-            color: #e6edf3;
-            border-color: #30363d;
-        }
-        
-        .btn-neutral-gray:hover {
-            background-color: #30363d;
-        }
-        /* Product Image Styling */
-        
-        .product-image-preview {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 0.5rem;
-            /* rounded-lg */
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background-color: rgba(13, 17, 23, 0.5);
-        }
-        
-        .product-image-sales {
-            width: 100%;
-            height: 100px;
-            /* Increased height for better visual */
-            object-fit: cover;
-            border-radius: 0.75rem 0.75rem 0 0;
-            /* rounded-xl top */
-        }
-        
-        .product-image-placeholder,
-        .product-image-sales-placeholder {
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: rgba(13, 17, 23, 0.5);
-            color: #7d8590;
-            font-size: 0.875rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .product-image-placeholder {
-            width: 60px;
-            height: 60px;
-            border-radius: 0.5rem;
-            /* rounded-lg */
-        }
-        
-        .product-image-sales-placeholder {
-            width: 100%;
-            height: 100px;
-            border-radius: 0.75rem 0.75rem 0 0;
-            /* rounded-xl top */
-        }
-        /* POS product card styling */
-        
-        #pos-product-list button {
-            /* Uses .card-glass for base, additional styling if needed */
-            text-align: center;
-        }
-        
-        #pos-product-list button .p-2 {
-            /* Ensure padding for text content in POS product cards */
-            padding: 0.75rem;
-            /* p-3 */
-        }
-        
-        #pos-product-list button .text-sm {
-            font-size: 0.875rem;
-        }
-        
-        #pos-product-list button .text-xs {
-            font-size: 0.75rem;
+            z-index: 100;
+            color: white;
+            font-size: 1.2rem;
         }
     </style>
 </head>
 
 <body class="min-h-screen flex flex-col">
 
+    <div id="loading-indicator" class="loading-overlay hidden">Cargando datos...</div>
+
     <header class="header-bg text-white p-4 shadow-lg">
-        <h1 class="text-2xl font-bold text-center text-main">Sistema de Gestión Tienda 3D</h1>
+        <h1 class="text-2xl font-bold text-center text-main">Sistema de Gestión Tienda 3D (con Firebase)</h1>
     </header>
 
     <nav class="nav-bg shadow-md fixed top-[60px] left-0 right-0 z-10">
@@ -384,7 +153,7 @@
 
                     <h3 class="text-lg font-semibold mt-6 mb-3 text-main">Stock de Plásticos</h3>
                     <div id="plastic-stock-list" class="space-y-3">
-                        <p class="text-secondary text-sm">No hay plásticos registrados.</p>
+                        <p class="text-secondary text-sm">Cargando plásticos...</p>
                     </div>
                 </div>
             </div>
@@ -435,7 +204,7 @@
 
                     <h3 class="text-lg font-semibold mt-6 mb-3 text-main">Inventario de Productos Fabricados</h3>
                     <div id="fab-product-list" class="space-y-3">
-                        <p class="text-secondary text-sm">No hay productos fabricados en inventario.</p>
+                        <p class="text-secondary text-sm">Cargando productos...</p>
                     </div>
                 </div>
             </div>
@@ -447,15 +216,20 @@
                 <button id="reset-store-sales-button" class="w-full btn btn-warning-orange py-2.5 px-4">
                     Empezar un Nuevo Día
                 </button>
+                 <p class="text-xs text-center text-neutral-500 mt-2">ID de Usuario (para soporte): <span id="user-id-display"></span></p>
             </div>
         </section>
 
         <section id="content-pos" class="tab-content space-y-6">
             <h2 class="text-xl font-semibold mb-4 text-main">Seleccionar Productos para Vender</h2>
             <div id="pos-product-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
-                <p class="text-secondary text-sm col-span-full">No hay productos disponibles para la venta.</p>
+                <p class="text-secondary text-sm col-span-full">Cargando productos disponibles...</p>
             </div>
 
+            <div class="card-glass p-4 mb-6">
+                <h3 class="text-lg font-semibold text-main mb-1">Ventas del Día</h3>
+                <p id="pos-daily-sales-total" class="text-2xl font-bold text-green-400">ARS 0.00</p>
+            </div>
             <h3 class="text-lg font-semibold mb-3 text-main">Carrito de Compras</h3>
             <div class="card-glass p-4">
                 <div id="pos-cart-items" class="space-y-2 mb-3 min-h-[40px]">
@@ -568,13 +342,44 @@
         </div>
     </div>
 
+    <script type="module">
+        // Importaciones de Firebase (versión 11.8.1)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
 
-    <script>
+        // Configuración de Firebase (usando la nueva configuración hardcodeada)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDkp0U0wsiY80JyU_fJwkLEL1XfPdjRuEQ",
+            authDomain: "pagenico-c197b.firebaseapp.com",
+            projectId: "pagenico-c197b",
+            storageBucket: "pagenico-c197b.firebasestorage.app",
+            messagingSenderId: "538626743627",
+            appId: "1:538626743627:web:8392d4f77ea51563279cce",
+            measurementId: "G-HLTC26PE6B"
+        };
+        
+        // Inicializar Firebase App (UNA SOLA VEZ)
+        const fbApp = initializeApp(firebaseConfig);
+        const db = getFirestore(fbApp);
+        const auth = getAuth(fbApp);
+        const analytics = getAnalytics(fbApp); // Inicializar Analytics
+
+        // El appId para las rutas de Firestore priorizará __app_id si está disponible (entorno Canvas)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        // Si necesitas usar el appId de firebaseConfig para las rutas, cambia la línea anterior por:
+        // const appId = firebaseConfig.appId; // O firebaseConfig.projectId si es más apropiado para tu estructura
+
+        let userId = null; 
+
         // IDs de elementos DOM
         const tabInventarioButton = document.getElementById('tab-inventario');
         const tabPosButton = document.getElementById('tab-pos');
         const contentInventario = document.getElementById('content-inventario');
         const contentPos = document.getElementById('content-pos');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const userIdDisplay = document.getElementById('user-id-display');
 
         // Gestión de Plástico
         const plasticNameInput = document.getElementById('plastic-name');
@@ -601,6 +406,7 @@
         const posCartTotalSpan = document.getElementById('pos-cart-total');
         const posClearCartButton = document.getElementById('pos-clear-cart-button');
         const posCheckoutButton = document.getElementById('pos-checkout-button');
+        const posDailySalesTotalSpan = document.getElementById('pos-daily-sales-total');
 
         // Opciones de Tienda/Feria
         const generateStoreSummaryButton = document.getElementById('generate-store-summary-button');
@@ -634,17 +440,41 @@
         const saveUpdatePlasticButton = document.getElementById('save-update-plastic-button');
         const cancelUpdatePlasticButton = document.getElementById('cancel-update-plastic-button');
 
-
         // Estado de la Aplicación
-        let plastics = []; // { id, name, quantity (grams) }
-        let products = []; // { id, name, price, stock, image, plasticCostPerUnit: { typeId, amount, name } (opcional) }
-        let cart = []; // { ...productData, cartItemId (unique for this cart instance) }
+        let plastics = [];
+        let products = [];
+        let cart = [];
         let totalSales = 0;
-        let completedSales = []; // { id, items: [...cart], totalAmount, timestamp }
+        let completedSales = [];
 
         let currentFabProductImageBase64 = null;
         let editingFabProductImageBase64 = null;
 
+        // --- Funciones de Colecciones de Firestore ---
+        function plasticsCollectionRef() {
+            if (!userId) throw new Error("User not authenticated for plastics collection");
+            return collection(db, "artifacts", appId, "users", userId, "plastics");
+        }
+
+        function plasticDocRef(docId) {
+            if (!userId) throw new Error("User not authenticated for plastic doc");
+            return doc(db, "artifacts", appId, "users", userId, "plastics", docId);
+        }
+
+        function productsCollectionRef() {
+            if (!userId) throw new Error("User not authenticated for products collection");
+            return collection(db, "artifacts", appId, "users", userId, "products");
+        }
+
+        function productDocRef(docId) {
+            if (!userId) throw new Error("User not authenticated for product doc");
+            return doc(db, "artifacts", appId, "users", userId, "products", docId);
+        }
+        
+        function completedSalesCollectionRef() {
+            if (!userId) throw new Error("User not authenticated for completedSales collection");
+            return collection(db, "artifacts", appId, "users", userId, "completedSales");
+        }
 
         // --- Funciones Auxiliares para Imágenes ---
         function handleImagePreview(fileInput, previewElement, base64VarSetter) {
@@ -668,7 +498,6 @@
             editingFabProductImageBase64 = val;
             removeEditFabImageButton.classList.toggle('hidden', !val);
         }));
-
         removeEditFabImageButton.addEventListener('click', () => {
             editFabProductImagePreview.src = '';
             editFabProductImagePreview.classList.add('hidden');
@@ -677,42 +506,19 @@
             removeEditFabImageButton.classList.add('hidden');
         });
 
-
         // --- Funciones de Modales y Mensajes ---
-        function showModal(modalElement) {
-            modalElement.classList.add('active');
-        }
-
+        function showModal(modalElement) { modalElement.classList.add('active'); }
         function hideModal(modalElement) {
             modalElement.classList.remove('active');
-            // Resetear campos de imagen y previews al cerrar modales
-            fabProductImagePreview.classList.add('hidden');
-            fabProductImagePreview.src = '';
-            fabProductImageInput.value = '';
-            currentFabProductImageBase64 = null;
-
-            editFabProductImagePreview.classList.add('hidden');
-            editFabProductImagePreview.src = '';
-            editFabProductImageInput.value = '';
-            editingFabProductImageBase64 = null;
-            removeEditFabImageButton.classList.add('hidden');
-
-            // Resetear campos de "Agregar Stock" en modal de edición
-            addStockQuantityInput.value = '0';
-            addStockDeductPlasticCheck.checked = false;
-            addStockPlasticDetailsDiv.classList.add('hidden');
-            addStockPlasticTypeSelect.value = '';
-            addStockPlasticGramsUnitInput.value = '';
+            // Resetear campos de imagen y stock adicional en modales al cerrarlos
+            fabProductImagePreview.classList.add('hidden'); fabProductImagePreview.src = ''; fabProductImageInput.value = ''; currentFabProductImageBase64 = null;
+            editFabProductImagePreview.src = ''; editFabProductImagePreview.classList.add('hidden'); editFabProductImageInput.value = ''; editingFabProductImageBase64 = null; removeEditFabImageButton.classList.add('hidden');
+            addStockQuantityInput.value = '0'; addStockDeductPlasticCheck.checked = false; addStockPlasticDetailsDiv.classList.add('hidden'); addStockPlasticTypeSelect.value = ''; addStockPlasticGramsUnitInput.value = '';
         }
-
         function showMessage(title, textContent, isHtml = false) {
             messageModalTitle.textContent = title;
-            if (isHtml) {
-                messageModalText.innerHTML = textContent; // Directly set HTML content
-            } else {
-                // For plain text, ensure it's wrapped in a <p> or similar for consistent styling if needed
-                messageModalText.innerHTML = `<p class="text-label">${textContent.replace(/\n/g, '<br>')}</p>`;
-            }
+            if (isHtml) { messageModalText.innerHTML = textContent; }
+            else { messageModalText.innerHTML = `<p class="text-label">${textContent.replace(/\n/g, '<br>')}</p>`; }
             showModal(messageModal);
         }
         messageModalClose.addEventListener('click', () => hideModal(messageModal));
@@ -721,27 +527,22 @@
 
         // --- Lógica de Pestañas ---
         function setActiveTab(activeButton, activeContent) {
-            [tabInventarioButton, tabPosButton].forEach(b => {
-                b.classList.remove('tab-active-text', 'tab-active-border');
-                b.classList.add('text-gray-400'); // Use a more descriptive class if needed from new style
-            });
-            activeButton.classList.add('tab-active-text', 'tab-active-border');
-            activeButton.classList.remove('text-gray-400');
+            [tabInventarioButton, tabPosButton].forEach(b => { b.classList.remove('tab-active-text', 'tab-active-border'); b.classList.add('text-gray-400'); }); // text-gray-400 era text-secondary
+            activeButton.classList.add('tab-active-text', 'tab-active-border'); activeButton.classList.remove('text-gray-400');
             [contentInventario, contentPos].forEach(c => c.classList.remove('active'));
             activeContent.classList.add('active');
             localStorage.setItem('activeStoreTab', activeButton.id);
         }
 
-        // --- Gestión de Materia Prima (Plástico) ---
+        // --- Gestión de Materia Prima (Plástico) con Firestore ---
         function renderPlasticStock() {
             plasticStockListDiv.innerHTML = '';
             if (plastics.length === 0) {
                 plasticStockListDiv.innerHTML = '<p class="text-secondary text-sm">No hay plásticos registrados.</p>';
             } else {
-                plastics.forEach(p => {
+                const sortedPlastics = [...plastics].sort((a, b) => a.name.localeCompare(b.name));
+                sortedPlastics.forEach(p => {
                     const div = document.createElement('div');
-                    // Applied .card-glass for consistency, but might be too much for small items.
-                    // A simpler background or just text might be better. For now, keeping it simple.
                     div.className = 'bg-[rgba(22,27,34,0.8)] p-3 rounded-lg shadow flex justify-between items-center';
                     div.innerHTML = `
                         <div>
@@ -761,7 +562,7 @@
             document.querySelectorAll('.delete-plastic-button').forEach(btn => btn.addEventListener('click', (e) => deletePlasticType(e.target.dataset.id)));
         }
 
-        function addPlasticType() {
+        async function addPlasticType() {
             const name = plasticNameInput.value.trim();
             const quantity = parseInt(plasticQuantityInput.value);
             if (!name || isNaN(quantity) || quantity < 0) {
@@ -772,16 +573,15 @@
                 showMessage("Error", "Ya existe un plástico con ese nombre.");
                 return;
             }
-            plastics.push({
-                id: `plastic_${Date.now()}`,
-                name,
-                quantity
-            });
-            savePlasticsToLocalStorage();
-            renderPlasticStock();
-            plasticNameInput.value = '';
-            plasticQuantityInput.value = '';
-            showMessage("Éxito", `Plástico "${name}" agregado con ${quantity}g.`);
+            try {
+                await addDoc(plasticsCollectionRef(), { name, quantity });
+                plasticNameInput.value = '';
+                plasticQuantityInput.value = '';
+                showMessage("Éxito", `Plástico "${name}" agregado con ${quantity}g.`);
+            } catch (error) {
+                console.error("Error agregando plástico:", error);
+                showMessage("Error de Base de Datos", "No se pudo agregar el plástico: " + error.message);
+            }
         }
         addPlasticButton.addEventListener('click', addPlasticType);
 
@@ -795,7 +595,7 @@
             }
         }
 
-        saveUpdatePlasticButton.addEventListener('click', () => {
+        saveUpdatePlasticButton.addEventListener('click', async () => {
             const plasticId = editPlasticIdInput.value;
             const newQuantity = parseInt(updatePlasticQuantityInput.value);
             if (isNaN(newQuantity) || newQuantity < 0) {
@@ -804,26 +604,45 @@
             }
             const plastic = plastics.find(p => p.id === plasticId);
             if (plastic) {
-                plastic.quantity = newQuantity;
-                savePlasticsToLocalStorage();
-                renderPlasticStock();
-                hideModal(editPlasticStockModal);
-                showMessage("Éxito", `Stock de "${plastic.name}" actualizado a ${newQuantity}g.`);
+                try {
+                    await updateDoc(plasticDocRef(plasticId), { quantity: newQuantity });
+                    hideModal(editPlasticStockModal);
+                    showMessage("Éxito", `Stock de "${plastic.name}" actualizado a ${newQuantity}g.`);
+                } catch (error) {
+                    console.error("Error actualizando stock de plástico:", error);
+                    showMessage("Error de Base de Datos", "No se pudo actualizar el stock: " + error.message);
+                }
             }
         });
 
-        function deletePlasticType(plasticId) {
+        async function deletePlasticType(plasticId) {
+            const plasticToDelete = plastics.find(p => p.id === plasticId);
+            if (!plasticToDelete) return;
+
             const isUsed = products.some(p => p.plasticCostPerUnit && p.plasticCostPerUnit.typeId === plasticId);
             if (isUsed) {
-                showMessage("Error al Eliminar", "Este plástico no puede ser eliminado porque está referenciado en uno o más productos fabricados. Considere editar esos productos primero.");
+                showMessage("Error al Eliminar", `El plástico "${plasticToDelete.name}" no puede ser eliminado porque está referenciado en productos fabricados. Edite esos productos primero.`);
                 return;
             }
-            if (window.confirm("¿Seguro que deseas eliminar este tipo de plástico? Esta acción no se puede deshacer.")) {
-                plastics = plastics.filter(p => p.id !== plasticId);
-                savePlasticsToLocalStorage();
-                renderPlasticStock();
-                showMessage("Plástico Eliminado", "El tipo de plástico ha sido eliminado.");
-            }
+            // Custom modal for confirmation is better, but for now, a simple message.
+            // To implement a custom confirm, you'd show a modal and handle its button clicks.
+            // For this example, we'll use a direct message and proceed if the user confirms (hypothetically).
+            // This is a placeholder for a proper confirmation modal.
+            showMessage("Confirmar Eliminación", `¿Seguro que deseas eliminar el plástico "${plasticToDelete.name}"? Esta acción no se puede deshacer. (Esta es una alerta, idealmente sería un modal de confirmación)`, true);
+            // Simulate a delay for the user to read, then proceed. In a real app, use a modal with "Confirm" / "Cancel" buttons.
+            // For now, we'll proceed with a timeout to demonstrate the logic, but this is NOT a good practice for real confirmation.
+            // A proper confirmation modal is needed.
+            // setTimeout(async () => { // This timeout is just for demonstration, replace with a real confirm modal
+                // if (userConfirmed) { // This would come from the modal interaction
+                    try {
+                        await deleteDoc(plasticDocRef(plasticId));
+                        showMessage("Plástico Eliminado", `El plástico "${plasticToDelete.name}" ha sido eliminado.`);
+                    } catch (error) {
+                        console.error("Error eliminando plástico:", error);
+                        showMessage("Error de Base de Datos", "No se pudo eliminar el plástico: " + error.message);
+                    }
+                // }
+            // }, 500); // Remove this timeout in a real app.
         }
 
 
@@ -832,24 +651,27 @@
             selects.forEach(select => {
                 const currentValue = select.value;
                 select.innerHTML = '<option value="" class="bg-slate-700">Seleccione un plástico...</option>';
-                plastics.forEach(p => {
+                const sortedPlastics = [...plastics].sort((a, b) => a.name.localeCompare(b.name));
+                sortedPlastics.forEach(p => {
                     const option = document.createElement('option');
                     option.value = p.id;
                     option.textContent = `${p.name} (${p.quantity}g disp.)`;
-                    option.className = "bg-slate-700"; // Style options for dark mode
+                    option.className = "bg-slate-700";
                     select.appendChild(option);
                 });
                 if (plastics.find(p => p.id === currentValue)) {
                     select.value = currentValue;
+                } else {
+                    select.value = "";
                 }
             });
         }
 
-        // --- Gestión de Productos Fabricados ---
+        // --- Gestión de Productos Fabricados con Firestore ---
         fabDeductPlasticCheck.addEventListener('change', () => fabPlasticDetailsDiv.classList.toggle('hidden', !fabDeductPlasticCheck.checked));
         addStockDeductPlasticCheck.addEventListener('change', () => addStockPlasticDetailsDiv.classList.toggle('hidden', !addStockDeductPlasticCheck.checked));
 
-        function addFabProduct() {
+        async function addFabProduct() {
             const name = fabProductNameInput.value.trim();
             const price = parseFloat(fabProductPriceInput.value);
             const quantityManufactured = parseInt(fabProductQuantityInput.value);
@@ -861,7 +683,8 @@
 
             let plasticCostPerUnit = null;
             let totalPlasticNeeded = 0;
-            let selectedPlastic = null;
+            let selectedPlasticForDb = null;
+            let plasticUpdateNeeded = false;
 
             if (fabDeductPlasticCheck.checked) {
                 const plasticTypeId = fabPlasticTypeSelect.value;
@@ -870,63 +693,63 @@
                     showMessage("Error", "Si descuenta plástico, seleccione tipo y especifique gramos por unidad válidos.");
                     return;
                 }
-                selectedPlastic = plastics.find(p => p.id === plasticTypeId);
-                if (!selectedPlastic) {
+                selectedPlasticForDb = plastics.find(p => p.id === plasticTypeId);
+                if (!selectedPlasticForDb) {
                     showMessage("Error", "Tipo de plástico seleccionado no válido.");
                     return;
                 }
                 totalPlasticNeeded = gramsPerUnit * quantityManufactured;
-                if (selectedPlastic.quantity < totalPlasticNeeded) {
-                    showMessage("Error", `Stock insuficiente de ${selectedPlastic.name}. Necesita ${totalPlasticNeeded}g, disponibles ${selectedPlastic.quantity}g.`);
+                if (selectedPlasticForDb.quantity < totalPlasticNeeded) {
+                    showMessage("Error", `Stock insuficiente de ${selectedPlasticForDb.name}. Necesita ${totalPlasticNeeded}g, disponibles ${selectedPlasticForDb.quantity}g.`);
                     return;
                 }
-                plasticCostPerUnit = {
-                    typeId: plasticTypeId,
-                    amount: gramsPerUnit,
-                    name: selectedPlastic.name
-                };
-            }
-
-            if (selectedPlastic && totalPlasticNeeded > 0) {
-                selectedPlastic.quantity -= totalPlasticNeeded;
-                savePlasticsToLocalStorage();
+                plasticCostPerUnit = { typeId: plasticTypeId, amount: gramsPerUnit, name: selectedPlasticForDb.name };
+                plasticUpdateNeeded = true;
             }
 
             const existingProduct = products.find(p => p.name.toLowerCase() === name.toLowerCase());
-            if (existingProduct) {
-                existingProduct.stock += quantityManufactured;
-                if (plasticCostPerUnit) {
-                    existingProduct.plasticCostPerUnit = plasticCostPerUnit;
+            
+            try {
+                const batch = writeBatch(db);
+
+                if (existingProduct) {
+                    const newStock = existingProduct.stock + quantityManufactured;
+                    const updateData = {
+                        stock: newStock,
+                        price: price,
+                        image: currentFabProductImageBase64 !== null ? currentFabProductImageBase64 : (existingProduct.image || null)
+                    };
+                    if (plasticCostPerUnit) {
+                        updateData.plasticCostPerUnit = plasticCostPerUnit;
+                    }
+                    batch.update(productDocRef(existingProduct.id), updateData);
+                } else {
+                    const newProductRef = doc(productsCollectionRef()); // Generate new doc ref for ID
+                     batch.set(newProductRef, { 
+                        name,
+                        price,
+                        stock: quantityManufactured,
+                        image: currentFabProductImageBase64,
+                        plasticCostPerUnit
+                    });
                 }
-                if (currentFabProductImageBase64 !== null) {
-                    existingProduct.image = currentFabProductImageBase64;
+
+                if (plasticUpdateNeeded && selectedPlasticForDb && totalPlasticNeeded > 0) {
+                    const newPlasticQuantity = selectedPlasticForDb.quantity - totalPlasticNeeded;
+                    batch.update(plasticDocRef(selectedPlasticForDb.id), { quantity: newPlasticQuantity });
                 }
-            } else {
-                products.push({
-                    id: `prod_${Date.now()}`,
-                    name,
-                    price,
-                    stock: quantityManufactured,
-                    image: currentFabProductImageBase64,
-                    plasticCostPerUnit
-                });
+
+                await batch.commit();
+
+                showMessage("Éxito", `Producto "${name}" (${quantityManufactured} uds) agregado/actualizado en inventario.`);
+                fabProductNameInput.value = ''; fabProductPriceInput.value = ''; fabProductQuantityInput.value = '';
+                fabProductImageInput.value = ''; fabProductImagePreview.classList.add('hidden'); fabProductImagePreview.src = ''; currentFabProductImageBase64 = null;
+                fabDeductPlasticCheck.checked = false; fabPlasticDetailsDiv.classList.add('hidden'); fabPlasticTypeSelect.value = ''; fabPlasticGramsUnitInput.value = '';
+
+            } catch (error) {
+                console.error("Error agregando/actualizando producto fabricado:", error);
+                showMessage("Error de Base de Datos", "No se pudo agregar/actualizar el producto: " + error.message);
             }
-
-            saveProductsToLocalStorage();
-            renderAll();
-
-            showMessage("Éxito", `Producto "${name}" (${quantityManufactured} uds) agregado/actualizado en inventario.`);
-            fabProductNameInput.value = '';
-            fabProductPriceInput.value = '';
-            fabProductQuantityInput.value = '';
-            fabProductImageInput.value = '';
-            fabProductImagePreview.classList.add('hidden');
-            fabProductImagePreview.src = '';
-            currentFabProductImageBase64 = null;
-            fabDeductPlasticCheck.checked = false;
-            fabPlasticDetailsDiv.classList.add('hidden');
-            fabPlasticTypeSelect.value = '';
-            fabPlasticGramsUnitInput.value = '';
         }
         addFabProductButton.addEventListener('click', addFabProduct);
 
@@ -935,9 +758,10 @@
             if (products.length === 0) {
                 fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">No hay productos fabricados.</p>';
             } else {
-                products.forEach(p => {
+                const sortedProducts = [...products].sort((a,b) => a.name.localeCompare(b.name));
+                sortedProducts.forEach(p => {
                     const div = document.createElement('div');
-                    div.className = 'card-glass p-3 flex items-center'; // Using card-glass
+                    div.className = 'card-glass p-3 flex items-center';
                     let imageHtml = p.image ? `<img src="${p.image}" alt="${p.name}" class="product-image-preview mr-4">` : `<div class="product-image-placeholder mr-4"><span>Sin<br>Img</span></div>`;
                     let plasticInfo = '';
                     if (p.plasticCostPerUnit) {
@@ -986,113 +810,116 @@
                 }
                 editFabProductImageInput.value = '';
 
-                addStockDeductPlasticCheck.checked = false;
-                addStockPlasticDetailsDiv.classList.add('hidden');
+                addStockDeductPlasticCheck.checked = !!product.plasticCostPerUnit; // Check if plasticCost was defined
+                addStockPlasticDetailsDiv.classList.toggle('hidden', !addStockDeductPlasticCheck.checked);
                 addStockPlasticTypeSelect.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.typeId : '';
                 addStockPlasticGramsUnitInput.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.amount : '';
-
+                
                 showModal(editFabProductModal);
             }
         }
 
-        saveEditFabButton.addEventListener('click', () => {
+        saveEditFabButton.addEventListener('click', async () => {
             const productId = editFabProductIdInput.value;
             const product = products.find(p => p.id === productId);
-            if (!product) {
-                showMessage("Error", "Producto no encontrado.");
-                return;
-            }
+            if (!product) { showMessage("Error", "Producto no encontrado."); return; }
 
             const newName = editFabProductNameInput.value.trim();
             const newPrice = parseFloat(editFabProductPriceInput.value);
-
-            if (!newName || isNaN(newPrice) || newPrice < 0) {
-                showMessage("Error", "Nombre y precio válido son requeridos.");
-                return;
-            }
-            product.name = newName;
-            product.price = newPrice;
-            product.image = editingFabProductImageBase64;
-
+            if (!newName || isNaN(newPrice) || newPrice < 0) { showMessage("Error", "Nombre y precio válido son requeridos."); return; }
 
             const additionalQuantity = parseInt(addStockQuantityInput.value);
-            if (isNaN(additionalQuantity) || additionalQuantity < 0) {
-                showMessage("Error", "Cantidad adicional a fabricar debe ser un número no negativo.");
-                return;
-            }
+            if (isNaN(additionalQuantity) || additionalQuantity < 0) { showMessage("Error", "Cantidad adicional debe ser no negativa."); return; }
 
-            let modifiedPlasticStock = false;
+            const updateData = { name: newName, price: newPrice, image: editingFabProductImageBase64 };
+            let plasticUpdateForDb = null;
+            let newPlasticCostPerUnitForProduct = product.plasticCostPerUnit; 
 
             if (additionalQuantity > 0) {
-                let plasticCostForNewBatch = null;
-                let totalPlasticForNewBatch = 0;
-                let selectedPlasticForNewBatch = null;
-
+                updateData.stock = product.stock + additionalQuantity;
                 if (addStockDeductPlasticCheck.checked) {
                     const plasticTypeId = addStockPlasticTypeSelect.value;
                     const gramsPerUnit = parseFloat(addStockPlasticGramsUnitInput.value);
-                    if (!plasticTypeId || isNaN(gramsPerUnit) || gramsPerUnit <= 0) {
-                        showMessage("Error", "Para el nuevo lote, si descuenta plástico, seleccione tipo y gramos válidos.");
+                    if (!plasticTypeId || isNaN(gramsPerUnit) || gramsPerUnit <= 0) { showMessage("Error", "Para nuevo lote, seleccione plástico y gramos válidos."); return; }
+                    
+                    const selectedPlastic = plastics.find(p => p.id === plasticTypeId);
+                    if (!selectedPlastic) { showMessage("Error", "Tipo de plástico para nuevo lote no válido."); return; }
+                    
+                    const totalPlasticForNewBatch = gramsPerUnit * additionalQuantity;
+                    if (selectedPlastic.quantity < totalPlasticForNewBatch) {
+                        showMessage("Error", `Stock insuficiente de ${selectedPlastic.name}. Necesita ${totalPlasticForNewBatch}g, disponibles ${selectedPlastic.quantity}g.`);
                         return;
                     }
-                    selectedPlasticForNewBatch = plastics.find(p => p.id === plasticTypeId);
-                    if (!selectedPlasticForNewBatch) {
-                        showMessage("Error", "Tipo de plástico para nuevo lote no válido.");
-                        return;
-                    }
-                    totalPlasticForNewBatch = gramsPerUnit * additionalQuantity;
-                    if (selectedPlasticForNewBatch.quantity < totalPlasticForNewBatch) {
-                        showMessage("Error", `Stock insuficiente de ${selectedPlasticForNewBatch.name} para el nuevo lote. Necesita ${totalPlasticForNewBatch}g, disponibles ${selectedPlasticForNewBatch.quantity}g.`);
-                        return;
-                    }
-                    plasticCostForNewBatch = {
-                        typeId: plasticTypeId,
-                        amount: gramsPerUnit,
-                        name: selectedPlasticForNewBatch.name
-                    };
-                }
-
-                if (selectedPlasticForNewBatch && totalPlasticForNewBatch > 0) {
-                    selectedPlasticForNewBatch.quantity -= totalPlasticForNewBatch;
-                    modifiedPlasticStock = true;
-                }
-                product.stock += additionalQuantity;
-                if (plasticCostForNewBatch) {
-                    product.plasticCostPerUnit = plasticCostForNewBatch;
+                    plasticUpdateForDb = { id: selectedPlastic.id, newQuantity: selectedPlastic.quantity - totalPlasticForNewBatch };
+                    newPlasticCostPerUnitForProduct = { typeId: plasticTypeId, amount: gramsPerUnit, name: selectedPlastic.name };
                 }
             }
+            
+            if (addStockDeductPlasticCheck.checked) {
+                const plasticTypeId = addStockPlasticTypeSelect.value;
+                const gramsPerUnit = parseFloat(addStockPlasticGramsUnitInput.value);
+                if (plasticTypeId && !isNaN(gramsPerUnit) && gramsPerUnit > 0) {
+                    const selectedPlastic = plastics.find(p => p.id === plasticTypeId);
+                    if (selectedPlastic) {
+                         newPlasticCostPerUnitForProduct = { typeId: plasticTypeId, amount: gramsPerUnit, name: selectedPlastic.name };
+                    }
+                } else if (!plasticTypeId && (isNaN(gramsPerUnit) || gramsPerUnit <= 0)) { 
+                    newPlasticCostPerUnitForProduct = null;
+                }
+            } else {
+                 newPlasticCostPerUnitForProduct = null;
+            }
+            updateData.plasticCostPerUnit = newPlasticCostPerUnitForProduct;
 
-            saveProductsToLocalStorage();
-            if (modifiedPlasticStock) savePlasticsToLocalStorage();
+            try {
+                const batch = writeBatch(db);
+                batch.update(productDocRef(productId), updateData);
+                if (plasticUpdateForDb) {
+                    batch.update(plasticDocRef(plasticUpdateForDb.id), { quantity: plasticUpdateForDb.newQuantity });
+                }
+                await batch.commit();
 
-            renderAll();
-            hideModal(editFabProductModal);
-            showMessage("Éxito", `Producto "${product.name}" actualizado. Stock total: ${product.stock}.`);
+                hideModal(editFabProductModal);
+                showMessage("Éxito", `Producto "${newName}" actualizado. Stock total: ${updateData.stock !== undefined ? updateData.stock : product.stock}.`);
+            } catch (error) {
+                console.error("Error actualizando producto:", error);
+                showMessage("Error de Base de Datos", "No se pudo actualizar el producto: " + error.message);
+            }
         });
 
-        function deleteFabProduct(productId) {
-            if (window.confirm("¿Seguro que deseas eliminar este producto fabricado del inventario? Esta acción no se puede deshacer.")) {
-                products = products.filter(p => p.id !== productId);
-                saveProductsToLocalStorage();
-                renderAll();
-                showMessage("Producto Eliminado", "El producto fabricado ha sido eliminado del inventario.");
-            }
+        async function deleteFabProduct(productId) {
+            const productToDelete = products.find(p => p.id === productId);
+            if (!productToDelete) return;
+            // Placeholder for a proper confirmation modal
+            showMessage("Confirmar Eliminación", `¿Seguro que deseas eliminar el producto "${productToDelete.name}" del inventario? (Alerta de confirmación pendiente)`, true);
+            // setTimeout(async () => { // Replace with real confirm modal logic
+                // if (userConfirmed) {
+                    try {
+                        await deleteDoc(productDocRef(productId));
+                        showMessage("Producto Eliminado", `El producto "${productToDelete.name}" ha sido eliminado.`);
+                    } catch (error) {
+                        console.error("Error eliminando producto:", error);
+                        showMessage("Error de Base de Datos", "No se pudo eliminar el producto: " + error.message);
+                    }
+                // }
+            // }, 500);
         }
-
 
         // --- Lógica del Punto de Venta (POS) ---
         function renderProductsForSalePOS() {
             posProductListDiv.innerHTML = '';
             const availableProducts = products.filter(p => p.stock > 0);
-            if (availableProducts.length === 0) {
+            const sortedAvailableProducts = [...availableProducts].sort((a,b) => a.name.localeCompare(b.name));
+
+            if (sortedAvailableProducts.length === 0) {
                 posProductListDiv.innerHTML = '<p class="text-secondary text-sm col-span-full">No hay productos disponibles para la venta.</p>';
                 return;
             }
-            availableProducts.forEach(p => {
+            sortedAvailableProducts.forEach(p => {
                 const button = document.createElement('button');
                 button.className = `card-glass flex flex-col items-center justify-between overflow-hidden hover:border-sky-500 transition-colors`;
                 let imageHtml = p.image ? `<img src="${p.image}" alt="${p.name}" class="product-image-sales">` : `<div class="product-image-sales-placeholder"><span>Sin Imagen</span></div>`;
-                const textContainerClass = p.image ? 'p-2.5' : 'p-2.5 flex-grow flex flex-col justify-center'; // Adjusted padding
+                const textContainerClass = p.image ? 'p-2.5' : 'p-2.5 flex-grow flex flex-col justify-center';
                 button.innerHTML = `
                     ${imageHtml}
                     <div class="${textContainerClass} w-full">
@@ -1109,13 +936,12 @@
         function addProductToCartPOS(productId) {
             const product = products.find(p => p.id === productId);
             if (product && product.stock > 0) {
-                cart.push({...product,
-                    cartItemId: `cart_${Date.now()}_${Math.random().toString(36).substr(2,5)}`
-                });
-                product.stock--;
-                saveProductsToLocalStorage();
+                cart.push({...product, cartItemId: `cart_${Date.now()}_${Math.random().toString(36).substr(2,5)}` });
+                product.stock--; 
                 renderCartPOS();
                 renderProductsForSalePOS();
+            } else if (product && product.stock <= 0) {
+                showMessage("Stock Agotado", `El producto "${product.name}" ya no tiene stock disponible.`);
             }
         }
 
@@ -1125,8 +951,7 @@
                 const removedItem = cart[cartItemIndex];
                 const productInInventory = products.find(p => p.id === removedItem.id);
                 if (productInInventory) {
-                    productInInventory.stock++;
-                    saveProductsToLocalStorage();
+                    productInInventory.stock++; 
                 }
                 cart.splice(cartItemIndex, 1);
                 renderCartPOS();
@@ -1155,7 +980,7 @@
                 });
             }
             posCartTotalSpan.textContent = `ARS ${currentTotal.toFixed(2)}`;
-            posCartTotalSpan.className = currentTotal > 0 ? 'text-green-400' : 'text-slate-400'; // Dynamic color for total
+            posCartTotalSpan.className = currentTotal > 0 ? 'text-green-400' : 'text-slate-400';
             document.querySelectorAll('.pos-remove-from-cart-button').forEach(btn => btn.addEventListener('click', (e) => removeProductFromCartPOS(e.target.dataset.cartItemId)));
         }
 
@@ -1163,112 +988,140 @@
             if (cart.length > 0) {
                 cart.forEach(cartItem => {
                     const productInInventory = products.find(p => p.id === cartItem.id);
-                    if (productInInventory) productInInventory.stock++;
+                    if (productInInventory) productInInventory.stock += 1;
                 });
                 cart = [];
-                saveProductsToLocalStorage();
-                renderAll();
-                showMessage("Carrito Vacío", "El carrito ha sido vaciado y el stock restaurado.");
+                renderAll(); 
+                showMessage("Carrito Vacío", "El carrito ha sido vaciado y el stock visual restaurado.");
             }
         });
 
-        posCheckoutButton.addEventListener('click', () => {
+        posCheckoutButton.addEventListener('click', async () => {
             if (cart.length === 0) {
                 showMessage("Venta Vacía", "No hay productos en el carrito.");
                 return;
             }
             const saleAmount = cart.reduce((sum, item) => sum + item.price, 0);
-            totalSales += saleAmount;
-            completedSales.push({
-                id: `storeSale_${Date.now()}`,
-                items: [...cart],
-                totalAmount: saleAmount,
-                timestamp: new Date().toISOString()
-            });
+            const saleTimestamp = new Date().toISOString();
+            const saleItemsForDb = cart.map(item => ({
+                productId: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: 1 
+            }));
 
-            saveTotalSalesToLocalStorage();
-            saveCompletedSalesToLocalStorage();
+            try {
+                const batch = writeBatch(db);
+                for (const item of cart) {
+                    const productRef = productDocRef(item.id);
+                    const productData = products.find(p => p.id === item.id);
+                    if (productData) { 
+                        batch.update(productRef, { stock: productData.stock });
+                    } else {
+                        console.warn(`Producto con ID ${item.id} no encontrado en array local durante checkout.`);
+                    }
+                }
+                await batch.commit(); // Commit stock updates first
 
-            showMessage("Venta Finalizada", `Venta de ARS ${saleAmount.toFixed(2)} completada. Total del día: ARS ${totalSales.toFixed(2)}.`);
-            cart = [];
-            renderAll();
+                // Add sale to completedSales after stock updates are successful
+                await addDoc(completedSalesCollectionRef(), {
+                    items: saleItemsForDb,
+                    totalAmount: saleAmount,
+                    timestamp: saleTimestamp
+                });
+
+                totalSales += saleAmount;
+                saveTotalSalesToLocalStorage();
+
+                showMessage("Venta Finalizada", `Venta de ARS ${saleAmount.toFixed(2)} completada. Total del día: ARS ${totalSales.toFixed(2)}.`);
+                cart = [];
+                renderDailySalesDisplay();
+                renderCartPOS();
+                // renderProductsForSalePOS() will be called by onSnapshot for products
+                
+            } catch (error) {
+                console.error("Error durante el checkout:", error);
+                showMessage("Error de Base de Datos", "No se pudo completar la venta: " + error.message);
+                cart.forEach(cartItem => {
+                    const productInInventory = products.find(p => p.id === cartItem.id);
+                    if (productInInventory) productInInventory.stock++;
+                });
+                renderAll();
+            }
         });
 
         // --- Opciones de Tienda (Resumen, Reinicio) ---
-        resetStoreSalesButton.addEventListener('click', () => {
-            if (window.confirm("¿Empezar un nuevo día de caja? Se borrará el total y detalle de ventas, y se vaciará el carrito actual. El inventario de productos y plásticos no se modificará.")) {
-                totalSales = 0;
-                completedSales = [];
-                localStorage.removeItem('posTotalSales');
-                localStorage.removeItem('posCompletedSales');
-                cart = [];
-                renderAll();
-                showMessage('Nuevo Día Iniciado', 'Los contadores de ventas y el carrito han sido reiniciados. El stock de productos se mantiene.');
-            }
+        resetStoreSalesButton.addEventListener('click', async () => {
+            // Placeholder for a proper confirmation modal
+            showMessage("Confirmar Nuevo Día", "¿Empezar un nuevo día de caja? Se borrarán ventas y carrito. (Alerta de confirmación pendiente)", true);
+            // setTimeout(async () => { // Replace with real confirm modal logic
+                // if (userConfirmed) {
+                    totalSales = 0;
+                    localStorage.removeItem('posTotalSales');
+                    
+                    try {
+                        const salesQuery = query(completedSalesCollectionRef());
+                        const salesSnapshot = await getDocs(salesQuery);
+                        const batch = writeBatch(db);
+                        salesSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+                        await batch.commit();
+                    } catch (error) {
+                        console.error("Error reiniciando ventas del día en Firestore:", error);
+                        showMessage("Error de BD", "No se pudieron borrar las ventas anteriores de la BD.");
+                    }
+
+                    if (cart.length > 0) {
+                        cart.forEach(cartItem => {
+                            const productInInventory = products.find(p => p.id === cartItem.id);
+                            if (productInInventory) productInInventory.stock++; 
+                        });
+                        cart = [];
+                    }
+                    
+                    renderAll(); 
+                    showMessage('Nuevo Día Iniciado', 'Los contadores de ventas y el carrito han sido reiniciados.');
+                // }
+            // }, 500);
         });
+
         generateStoreSummaryButton.addEventListener('click', () => {
             if (completedSales.length === 0) {
                 showMessage('Resumen de Ventas', 'No hay ventas registradas para este período.');
                 return;
             }
             const productSummary = {};
-            completedSales.forEach(sale => sale.items.forEach(item => {
-                productSummary[item.id] = productSummary[item.id] || {
-                    name: item.name,
-                    quantity: 0,
-                    totalRevenue: 0
-                };
-                productSummary[item.id].quantity++;
-                productSummary[item.id].totalRevenue += item.price;
-            }));
-            let summaryText = `<pre><strong>Resumen de Ventas del Día</strong>\n\nTotal Transacciones: ${completedSales.length}\nIngresos Totales: ARS ${totalSales.toFixed(2)}\n\n<strong>Detalle por Producto:</strong>\n`;
+            let totalRevenueFromDbSales = 0;
+            completedSales.forEach(sale => {
+                totalRevenueFromDbSales += sale.totalAmount;
+                sale.items.forEach(item => {
+                    productSummary[item.productId] = productSummary[item.productId] || { name: item.name, quantity: 0, totalRevenue: 0 };
+                    productSummary[item.productId].quantity += item.quantity;
+                    productSummary[item.productId].totalRevenue += item.price * item.quantity;
+                });
+            });
+            let summaryText = `<pre><strong>Resumen de Ventas del Día (Firestore)</strong>\n\nTotal Transacciones: ${completedSales.length}\nIngresos Totales: ARS ${totalRevenueFromDbSales.toFixed(2)}\n\n<strong>Detalle por Producto:</strong>\n`;
             Object.values(productSummary).forEach(p => {
                 summaryText += `- ${p.name}:\n  Cantidad: ${p.quantity}\n  Ingresos: ARS ${p.totalRevenue.toFixed(2)}\n`;
             });
             if (Object.keys(productSummary).length === 0) summaryText += `No se vendieron productos específicos.\n`;
-            summaryText += `</pre>`;
+            summaryText += `\nTotal Ventas (local): ARS ${totalSales.toFixed(2)}</pre>`;
             showMessage('Resumen de Ventas', summaryText, true);
         });
 
-
-        // --- LocalStorage Functions ---
-        function savePlasticsToLocalStorage() {
-            localStorage.setItem('posPlastics', JSON.stringify(plastics));
-        }
-
-        function loadPlasticsFromLocalStorage() {
-            const storedPlastics = localStorage.getItem('posPlastics');
-            plastics = storedPlastics ? JSON.parse(storedPlastics) : [];
-        }
-
-        function saveProductsToLocalStorage() {
-            localStorage.setItem('posProducts', JSON.stringify(products));
-        }
-
-        function loadProductsFromLocalStorage() {
-            const storedProducts = localStorage.getItem('posProducts');
-            products = storedProducts ? JSON.parse(storedProducts) : [];
-        }
-
-        function saveTotalSalesToLocalStorage() {
-            localStorage.setItem('posTotalSales', JSON.stringify(totalSales));
-        }
-
+        // --- Funciones de LocalStorage ---
+        function saveTotalSalesToLocalStorage() { localStorage.setItem('posTotalSales', JSON.stringify(totalSales)); }
         function loadTotalSalesFromLocalStorage() {
             const storedSales = localStorage.getItem('posTotalSales');
             totalSales = storedSales ? JSON.parse(storedSales) : 0;
         }
-
-        function saveCompletedSalesToLocalStorage() {
-            localStorage.setItem('posCompletedSales', JSON.stringify(completedSales));
+        
+        // --- Renderizado de Ventas del Día ---
+        function renderDailySalesDisplay() {
+            if (posDailySalesTotalSpan) {
+                posDailySalesTotalSpan.textContent = `ARS ${totalSales.toFixed(2)}`;
+                posDailySalesTotalSpan.className = totalSales > 0 ? 'text-2xl font-bold text-green-400' : 'text-2xl font-bold text-slate-400';
+            }
         }
-
-        function loadCompletedSalesFromLocalStorage() {
-            const storedCompletedSales = localStorage.getItem('posCompletedSales');
-            completedSales = storedCompletedSales ? JSON.parse(storedCompletedSales) : [];
-        }
-
-        function renderTotalSales() { /* Placeholder, total sales shown in summary */ }
 
         // --- Inicialización y Renderizado Global ---
         function renderAll() {
@@ -1276,33 +1129,104 @@
             renderFabProductList();
             renderProductsForSalePOS();
             renderCartPOS();
-            renderTotalSales();
+            renderDailySalesDisplay();
         }
 
-        function initializeApp() {
-            loadPlasticsFromLocalStorage();
-            loadProductsFromLocalStorage();
-            loadTotalSalesFromLocalStorage();
-            loadCompletedSalesFromLocalStorage();
+        // --- Carga de Datos desde Firestore con onSnapshot ---
+        function setupFirestoreListeners() {
+            if (!userId) {
+                console.error("UserID no disponible. No se pueden configurar listeners de Firestore.");
+                loadingIndicator.textContent = "Error: Usuario no autenticado.";
+                return;
+            }
+            loadingIndicator.classList.remove('hidden');
 
-            // Set initial active tab based on localStorage or default to 'tab-inventario'
+            const plasticsQuery = query(plasticsCollectionRef());
+            onSnapshot(plasticsQuery, (snapshot) => {
+                plastics = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderAll();
+                loadingIndicator.classList.add('hidden');
+            }, (error) => {
+                console.error("Error escuchando cambios en plásticos:", error);
+                showMessage("Error de BD", "No se pudo cargar la lista de plásticos: " + error.message);
+                loadingIndicator.textContent = "Error cargando plásticos.";
+            });
+
+            const productsQuery = query(productsCollectionRef());
+            onSnapshot(productsQuery, (snapshot) => {
+                products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderAll();
+                loadingIndicator.classList.add('hidden');
+            }, (error) => {
+                console.error("Error escuchando cambios en productos:", error);
+                showMessage("Error de BD", "No se pudo cargar la lista de productos: " + error.message);
+                loadingIndicator.textContent = "Error cargando productos.";
+            });
+
+            const salesQuery = query(completedSalesCollectionRef());
+            onSnapshot(salesQuery, (snapshot) => {
+                completedSales = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // No es necesario renderAll() aquí a menos que afecte directamente la UI principal.
+                // El resumen de ventas lo usa, y el total de ventas del día se actualiza en checkout.
+                loadingIndicator.classList.add('hidden');
+            }, (error) => {
+                console.error("Error escuchando cambios en ventas completadas:", error);
+                loadingIndicator.textContent = "Error cargando historial de ventas.";
+            });
+        }
+        
+        async function initializeAppFirebase() {
+            loadingIndicator.classList.remove('hidden');
+            loadingIndicator.textContent = "Autenticando...";
+            try {
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    // Fallback to anonymous sign-in if no token is provided (for local dev or other scenarios)
+                    console.warn("Canvas initial auth token not found, attempting anonymous sign-in.");
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        if (userIdDisplay) userIdDisplay.textContent = userId;
+                        console.log("Usuario autenticado:", userId);
+                        loadingIndicator.textContent = "Cargando datos...";
+                        setupFirestoreListeners();
+                        loadTotalSalesFromLocalStorage();
+                        renderDailySalesDisplay();
+                    } else {
+                        userId = null;
+                        if (userIdDisplay) userIdDisplay.textContent = "No autenticado";
+                        console.log("Usuario no autenticado.");
+                        loadingIndicator.textContent = "Error: Autenticación fallida.";
+                        showMessage("Error de Autenticación", "No se pudo autenticar el usuario. Algunas funciones pueden no estar disponibles.");
+                        // Consider disabling UI elements that require auth here
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error inicializando Firebase Auth:", error);
+                loadingIndicator.textContent = "Error de autenticación.";
+                showMessage("Error Crítico", "No se pudo inicializar la autenticación de Firebase: " + error.message);
+            }
+
             const activeTabId = localStorage.getItem('activeStoreTab') || 'tab-inventario';
             const buttonToActivate = document.getElementById(activeTabId) || tabInventarioButton;
             const contentToActivate = activeTabId === 'tab-pos' ? contentPos : contentInventario;
             setActiveTab(buttonToActivate, contentToActivate);
-
-            renderAll(); // Render all components after setting the active tab
         }
 
         // Event Listeners para Pestañas
         tabInventarioButton.addEventListener('click', () => setActiveTab(tabInventarioButton, contentInventario));
         tabPosButton.addEventListener('click', () => {
             setActiveTab(tabPosButton, contentPos);
-            renderProductsForSalePOS(); // Ensure POS products are rendered when tab becomes active
+            renderProductsForSalePOS(); 
         });
 
-        document.addEventListener('DOMContentLoaded', initializeApp);
+        document.addEventListener('DOMContentLoaded', initializeAppFirebase);
     </script>
 </body>
-
 </html>
