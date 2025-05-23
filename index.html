@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -148,7 +148,8 @@
     </div>
 
 
-    <nav class="nav-bg shadow-md fixed top-[60px] left-0 right-0 z-10"> <div class="max-w-xl mx-auto flex">
+    <nav class="nav-bg shadow-md fixed top-[60px] left-0 right-0 z-10"> 
+        <div class="max-w-xl mx-auto flex">
             <button id="tab-inventario" class="tab-button flex-1 py-3 px-2 text-center font-semibold">
                 Gestión de Inventario
             </button>
@@ -158,7 +159,8 @@
         </div>
     </nav>
 
-    <main class="flex-grow p-4 max-w-xl mx-auto w-full mt-16"> <section id="content-inventario" class="tab-content active space-y-6">
+    <main class="flex-grow p-4 max-w-xl mx-auto w-full mt-16"> 
+        <section id="content-inventario" class="tab-content active space-y-6">
             <div>
                 <h2 class="text-xl font-semibold mb-3 text-main">Materia Prima: Plástico</h2>
                 <div class="card-glass p-4">
@@ -371,7 +373,6 @@
         // Importaciones de Firebase (versión 11.8.1)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
-        // Removed clearPersistence and terminate from this import as they were causing issues and not actively used.
         import { getFirestore, collection, doc, addDoc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
 
@@ -393,7 +394,7 @@
         const analytics = getAnalytics(fbApp);
         const provider = new GoogleAuthProvider();
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.appId; // Use Firebase appId as fallback
+        const appId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.appId; 
 
         let userId = null; 
         let unsubscribePlastics = () => {};
@@ -411,7 +412,6 @@
         const contentInventario = document.getElementById('content-inventario');
         const contentPos = document.getElementById('content-pos');
         const loadingIndicator = document.getElementById('loading-indicator');
-        // const userIdDisplay = document.getElementById('user-id-display'); // Now part of userInfoDisplay
 
         // Gestión de Plástico
         const plasticNameInput = document.getElementById('plastic-name');
@@ -489,11 +489,11 @@
                 loadingIndicator.classList.remove('hidden');
                 await signInWithPopup(auth, provider);
                 // onAuthStateChanged will handle UI updates and listener setup
-                showMessage("Inicio de Sesión Exitoso", "Has iniciado sesión con Google.");
+                // No es necesario showMessage aquí, onAuthStateChanged lo hará implicitamente
             } catch (error) {
                 console.error("Error durante inicio de sesión con Google:", error);
                 showMessage("Error de Inicio de Sesión", `No se pudo iniciar sesión con Google: ${error.message}`);
-                loadingIndicator.classList.add('hidden');
+                loadingIndicator.classList.add('hidden'); // Asegurarse de ocultar si hay error
             }
         });
 
@@ -503,12 +503,13 @@
                 loadingIndicator.classList.remove('hidden');
                 await signOut(auth);
                 // onAuthStateChanged will handle UI updates and listener teardown
-                showMessage("Sesión Cerrada", "Has cerrado sesión.");
+                // No es necesario showMessage aquí, onAuthStateChanged lo hará implicitamente
             } catch (error) {
                 console.error("Error durante cierre de sesión:", error);
                 showMessage("Error al Salir", `No se pudo cerrar sesión: ${error.message}`);
             } finally {
-                loadingIndicator.classList.add('hidden');
+                // onAuthStateChanged se encargará de ocultar el loading indicator
+                // cuando el estado cambie a no autenticado.
             }
         });
 
@@ -601,7 +602,7 @@
             plasticStockListDiv.innerHTML = '';
             if (!userId) {
                  plasticStockListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar plásticos.</p>';
-                 populatePlasticSelects(); // Clear selects if logged out
+                 populatePlasticSelects(); 
                  return;
             }
             if (plastics.length === 0) {
@@ -1235,7 +1236,7 @@
                 plasticStockListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar plásticos.</p>';
                 fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar productos.</p>';
                 posProductListDiv.innerHTML = '<p class="text-secondary text-sm col-span-full">Inicie sesión para ver productos disponibles.</p>';
-                loadingIndicator.classList.add('hidden');
+                loadingIndicator.classList.add('hidden'); // Asegurarse de ocultar el indicador si no hay usuario
                 return;
             }
             loadingIndicator.textContent = "Cargando datos...";
@@ -1253,7 +1254,7 @@
             }, (error) => {
                 console.error("Error escuchando cambios en plásticos:", error);
                 showMessage("Error de BD", "No se pudo cargar la lista de plásticos: " + error.message);
-                loadingIndicator.textContent = "Error cargando plásticos.";
+                loadingIndicator.textContent = "Error cargando plásticos."; // Dejar visible si hay error
             });
 
             const productsQuery = query(productsCollectionRef());
@@ -1264,7 +1265,7 @@
             }, (error) => {
                 console.error("Error escuchando cambios en productos:", error);
                 showMessage("Error de BD", "No se pudo cargar la lista de productos: " + error.message);
-                loadingIndicator.textContent = "Error cargando productos.";
+                loadingIndicator.textContent = "Error cargando productos."; // Dejar visible si hay error
             });
 
             const salesQuery = query(completedSalesCollectionRef());
@@ -1275,7 +1276,7 @@
                 loadingIndicator.classList.add('hidden');
             }, (error) => {
                 console.error("Error escuchando cambios en ventas completadas:", error);
-                loadingIndicator.textContent = "Error cargando historial de ventas.";
+                loadingIndicator.textContent = "Error cargando historial de ventas."; // Dejar visible si hay error
             });
         }
         
@@ -1284,6 +1285,11 @@
             loadingIndicator.textContent = "Verificando sesión...";
             
             onAuthStateChanged(auth, (user) => {
+                // Ocultar el indicador de "Verificando sesión..." tan pronto como onAuthStateChanged responda.
+                // Si hay un usuario, se mostrará "Cargando datos..." dentro del bloque if(user).
+                // Si no hay usuario, se ocultará definitivamente aquí.
+                loadingIndicator.classList.add('hidden'); 
+
                 if (user) {
                     userId = user.uid;
                     userInfoDisplay.textContent = user.displayName || user.email || "Usuario Autenticado";
@@ -1292,8 +1298,8 @@
                     signoutButton.classList.remove('hidden');
                     
                     console.log("Usuario autenticado:", userId, user.email);
-                    loadingIndicator.textContent = "Cargando datos...";
-                    setupFirestoreListeners();
+                    // No mostramos "Cargando datos..." aquí directamente, setupFirestoreListeners lo hará.
+                    setupFirestoreListeners(); // Esto mostrará "Cargando datos..." y luego lo ocultará.
                     loadTotalSalesFromLocalStorage(); 
                     renderDailySalesDisplay();
                 } else {
@@ -1304,7 +1310,7 @@
                     signoutButton.classList.add('hidden');
                     
                     console.log("Usuario no autenticado.");
-                    loadingIndicator.classList.add('hidden'); 
+                    // loadingIndicator ya debería estar oculto por la línea al inicio de este callback.
                     clearLocalData(); 
                     plasticStockListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar plásticos.</p>';
                     fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar productos.</p>';
