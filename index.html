@@ -13,8 +13,8 @@
             font-family: 'Inter', sans-serif;
             background-color: #0D1117;
             color: #c9d1d9;
-            padding-top: 60px; /* Header height */
-            padding-bottom: 20px; /* Footer padding */
+            padding-top: 80px; /* Adjusted for new auth elements */
+            padding-bottom: 20px; 
         }
         .card-glass,
         .modal-glass-content {
@@ -110,6 +110,23 @@
             color: white;
             font-size: 1.2rem;
         }
+        .auth-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 30; /* Above header content but below modals */
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .user-info {
+            color: #c9d1d9;
+            font-size: 0.875rem;
+            background-color: rgba(30, 37, 50, 0.7);
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
     </style>
 </head>
 
@@ -117,12 +134,21 @@
 
     <div id="loading-indicator" class="loading-overlay hidden">Cargando datos...</div>
 
-    <header class="header-bg text-white p-4 shadow-lg">
-        <h1 class="text-2xl font-bold text-center text-main">Sistema de Gestión Tienda 3D (con Firebase)</h1>
+    <header class="header-bg text-white p-4 shadow-lg flex justify-center items-center">
+        <h1 class="text-2xl font-bold text-center text-main">Sistema de Gestión Tienda 3D</h1>
     </header>
 
-    <nav class="nav-bg shadow-md fixed top-[60px] left-0 right-0 z-10">
-        <div class="max-w-xl mx-auto flex">
+    <div class="auth-container">
+        <span id="user-info-display" class="user-info hidden"></span>
+        <button id="google-signin-button" class="btn btn-secondary-blue py-1.5 px-3 text-sm">
+            <svg class="inline-block w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path d="M1 1h22v22H1z" fill="none"/></svg>
+            Login Google
+        </button>
+        <button id="signout-button" class="btn btn-danger-red py-1.5 px-3 text-sm hidden">Cerrar Sesión</button>
+    </div>
+
+
+    <nav class="nav-bg shadow-md fixed top-[60px] left-0 right-0 z-10"> <div class="max-w-xl mx-auto flex">
             <button id="tab-inventario" class="tab-button flex-1 py-3 px-2 text-center font-semibold">
                 Gestión de Inventario
             </button>
@@ -132,8 +158,7 @@
         </div>
     </nav>
 
-    <main class="flex-grow p-4 max-w-xl mx-auto w-full mt-16">
-        <section id="content-inventario" class="tab-content active space-y-6">
+    <main class="flex-grow p-4 max-w-xl mx-auto w-full mt-16"> <section id="content-inventario" class="tab-content active space-y-6">
             <div>
                 <h2 class="text-xl font-semibold mb-3 text-main">Materia Prima: Plástico</h2>
                 <div class="card-glass p-4">
@@ -153,7 +178,7 @@
 
                     <h3 class="text-lg font-semibold mt-6 mb-3 text-main">Stock de Plásticos</h3>
                     <div id="plastic-stock-list" class="space-y-3">
-                        <p class="text-secondary text-sm">Cargando plásticos...</p>
+                        <p class="text-secondary text-sm">Inicie sesión para ver/cargar plásticos.</p>
                     </div>
                 </div>
             </div>
@@ -204,7 +229,7 @@
 
                     <h3 class="text-lg font-semibold mt-6 mb-3 text-main">Inventario de Productos Fabricados</h3>
                     <div id="fab-product-list" class="space-y-3">
-                        <p class="text-secondary text-sm">Cargando productos...</p>
+                        <p class="text-secondary text-sm">Inicie sesión para ver/cargar productos.</p>
                     </div>
                 </div>
             </div>
@@ -216,14 +241,14 @@
                 <button id="reset-store-sales-button" class="w-full btn btn-warning-orange py-2.5 px-4">
                     Empezar un Nuevo Día
                 </button>
-                 <p class="text-xs text-center text-neutral-500 mt-2">ID de Usuario (para soporte): <span id="user-id-display"></span></p>
+                 <p class="text-xs text-center text-neutral-500 mt-2 hidden">ID de Usuario (para soporte): <span id="user-id-display"></span></p>
             </div>
         </section>
 
         <section id="content-pos" class="tab-content space-y-6">
             <h2 class="text-xl font-semibold mb-4 text-main">Seleccionar Productos para Vender</h2>
             <div id="pos-product-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
-                <p class="text-secondary text-sm col-span-full">Cargando productos disponibles...</p>
+                <p class="text-secondary text-sm col-span-full">Inicie sesión para ver productos disponibles.</p>
             </div>
 
             <div class="card-glass p-4 mb-6">
@@ -345,11 +370,11 @@
     <script type="module">
         // Importaciones de Firebase (versión 11.8.1)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, writeBatch, getDocs, terminate, clearPersistence } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
 
-        // Configuración de Firebase (usando la nueva configuración hardcodeada)
+        // Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDkp0U0wsiY80JyU_fJwkLEL1XfPdjRuEQ",
             authDomain: "pagenico-c197b.firebaseapp.com",
@@ -360,26 +385,32 @@
             measurementId: "G-HLTC26PE6B"
         };
         
-        // Inicializar Firebase App (UNA SOLA VEZ)
+        // Inicializar Firebase App
         const fbApp = initializeApp(firebaseConfig);
         const db = getFirestore(fbApp);
         const auth = getAuth(fbApp);
-        const analytics = getAnalytics(fbApp); // Inicializar Analytics
+        const analytics = getAnalytics(fbApp);
+        const provider = new GoogleAuthProvider();
 
-        // El appId para las rutas de Firestore priorizará __app_id si está disponible (entorno Canvas)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        // Si necesitas usar el appId de firebaseConfig para las rutas, cambia la línea anterior por:
-        // const appId = firebaseConfig.appId; // O firebaseConfig.projectId si es más apropiado para tu estructura
+        const appId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.appId; // Use Firebase appId as fallback
 
         let userId = null; 
+        let unsubscribePlastics = () => {};
+        let unsubscribeProducts = () => {};
+        let unsubscribeSales = () => {};
+
 
         // IDs de elementos DOM
+        const googleSigninButton = document.getElementById('google-signin-button');
+        const signoutButton = document.getElementById('signout-button');
+        const userInfoDisplay = document.getElementById('user-info-display');
+
         const tabInventarioButton = document.getElementById('tab-inventario');
         const tabPosButton = document.getElementById('tab-pos');
         const contentInventario = document.getElementById('content-inventario');
         const contentPos = document.getElementById('content-pos');
         const loadingIndicator = document.getElementById('loading-indicator');
-        const userIdDisplay = document.getElementById('user-id-display');
+        // const userIdDisplay = document.getElementById('user-id-display'); // Now part of userInfoDisplay
 
         // Gestión de Plástico
         const plasticNameInput = document.getElementById('plastic-name');
@@ -450,6 +481,37 @@
         let currentFabProductImageBase64 = null;
         let editingFabProductImageBase64 = null;
 
+        // --- Funciones de Autenticación ---
+        googleSigninButton.addEventListener('click', async () => {
+            try {
+                loadingIndicator.textContent = "Iniciando sesión con Google...";
+                loadingIndicator.classList.remove('hidden');
+                await signInWithPopup(auth, provider);
+                // onAuthStateChanged will handle UI updates and listener setup
+                showMessage("Inicio de Sesión Exitoso", "Has iniciado sesión con Google.");
+            } catch (error) {
+                console.error("Error durante inicio de sesión con Google:", error);
+                showMessage("Error de Inicio de Sesión", `No se pudo iniciar sesión con Google: ${error.message}`);
+                loadingIndicator.classList.add('hidden');
+            }
+        });
+
+        signoutButton.addEventListener('click', async () => {
+            try {
+                loadingIndicator.textContent = "Cerrando sesión...";
+                loadingIndicator.classList.remove('hidden');
+                await signOut(auth);
+                // onAuthStateChanged will handle UI updates and listener teardown
+                showMessage("Sesión Cerrada", "Has cerrado sesión.");
+            } catch (error) {
+                console.error("Error durante cierre de sesión:", error);
+                showMessage("Error al Salir", `No se pudo cerrar sesión: ${error.message}`);
+            } finally {
+                loadingIndicator.classList.add('hidden');
+            }
+        });
+
+
         // --- Funciones de Colecciones de Firestore ---
         function plasticsCollectionRef() {
             if (!userId) throw new Error("User not authenticated for plastics collection");
@@ -510,7 +572,6 @@
         function showModal(modalElement) { modalElement.classList.add('active'); }
         function hideModal(modalElement) {
             modalElement.classList.remove('active');
-            // Resetear campos de imagen y stock adicional en modales al cerrarlos
             fabProductImagePreview.classList.add('hidden'); fabProductImagePreview.src = ''; fabProductImageInput.value = ''; currentFabProductImageBase64 = null;
             editFabProductImagePreview.src = ''; editFabProductImagePreview.classList.add('hidden'); editFabProductImageInput.value = ''; editingFabProductImageBase64 = null; removeEditFabImageButton.classList.add('hidden');
             addStockQuantityInput.value = '0'; addStockDeductPlasticCheck.checked = false; addStockPlasticDetailsDiv.classList.add('hidden'); addStockPlasticTypeSelect.value = ''; addStockPlasticGramsUnitInput.value = '';
@@ -527,7 +588,7 @@
 
         // --- Lógica de Pestañas ---
         function setActiveTab(activeButton, activeContent) {
-            [tabInventarioButton, tabPosButton].forEach(b => { b.classList.remove('tab-active-text', 'tab-active-border'); b.classList.add('text-gray-400'); }); // text-gray-400 era text-secondary
+            [tabInventarioButton, tabPosButton].forEach(b => { b.classList.remove('tab-active-text', 'tab-active-border'); b.classList.add('text-gray-400'); });
             activeButton.classList.add('tab-active-text', 'tab-active-border'); activeButton.classList.remove('text-gray-400');
             [contentInventario, contentPos].forEach(c => c.classList.remove('active'));
             activeContent.classList.add('active');
@@ -537,6 +598,11 @@
         // --- Gestión de Materia Prima (Plástico) con Firestore ---
         function renderPlasticStock() {
             plasticStockListDiv.innerHTML = '';
+            if (!userId) {
+                 plasticStockListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar plásticos.</p>';
+                 populatePlasticSelects(); // Clear selects if logged out
+                 return;
+            }
             if (plastics.length === 0) {
                 plasticStockListDiv.innerHTML = '<p class="text-secondary text-sm">No hay plásticos registrados.</p>';
             } else {
@@ -563,6 +629,7 @@
         }
 
         async function addPlasticType() {
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión para agregar plástico."); return; }
             const name = plasticNameInput.value.trim();
             const quantity = parseInt(plasticQuantityInput.value);
             if (!name || isNaN(quantity) || quantity < 0) {
@@ -586,6 +653,7 @@
         addPlasticButton.addEventListener('click', addPlasticType);
 
         function openEditPlasticStockModal(plasticId) {
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión para editar."); return; }
             const plastic = plastics.find(p => p.id === plasticId);
             if (plastic) {
                 editPlasticIdInput.value = plastic.id;
@@ -596,6 +664,7 @@
         }
 
         saveUpdatePlasticButton.addEventListener('click', async () => {
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión para guardar."); return; }
             const plasticId = editPlasticIdInput.value;
             const newQuantity = parseInt(updatePlasticQuantityInput.value);
             if (isNaN(newQuantity) || newQuantity < 0) {
@@ -616,6 +685,7 @@
         });
 
         async function deletePlasticType(plasticId) {
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión para eliminar."); return; }
             const plasticToDelete = plastics.find(p => p.id === plasticId);
             if (!plasticToDelete) return;
 
@@ -624,25 +694,19 @@
                 showMessage("Error al Eliminar", `El plástico "${plasticToDelete.name}" no puede ser eliminado porque está referenciado en productos fabricados. Edite esos productos primero.`);
                 return;
             }
-            // Custom modal for confirmation is better, but for now, a simple message.
-            // To implement a custom confirm, you'd show a modal and handle its button clicks.
-            // For this example, we'll use a direct message and proceed if the user confirms (hypothetically).
-            // This is a placeholder for a proper confirmation modal.
-            showMessage("Confirmar Eliminación", `¿Seguro que deseas eliminar el plástico "${plasticToDelete.name}"? Esta acción no se puede deshacer. (Esta es una alerta, idealmente sería un modal de confirmación)`, true);
-            // Simulate a delay for the user to read, then proceed. In a real app, use a modal with "Confirm" / "Cancel" buttons.
-            // For now, we'll proceed with a timeout to demonstrate the logic, but this is NOT a good practice for real confirmation.
-            // A proper confirmation modal is needed.
-            // setTimeout(async () => { // This timeout is just for demonstration, replace with a real confirm modal
-                // if (userConfirmed) { // This would come from the modal interaction
-                    try {
-                        await deleteDoc(plasticDocRef(plasticId));
-                        showMessage("Plástico Eliminado", `El plástico "${plasticToDelete.name}" ha sido eliminado.`);
-                    } catch (error) {
-                        console.error("Error eliminando plástico:", error);
-                        showMessage("Error de Base de Datos", "No se pudo eliminar el plástico: " + error.message);
-                    }
-                // }
-            // }, 500); // Remove this timeout in a real app.
+            
+            // TODO: Implement a proper confirmation modal here.
+            // For now, proceeding with a simple message as a placeholder.
+            const confirmDelete = window.confirm(`¿Seguro que deseas eliminar el plástico "${plasticToDelete.name}"? Esta acción no se puede deshacer.`);
+            if (confirmDelete) {
+                try {
+                    await deleteDoc(plasticDocRef(plasticId));
+                    showMessage("Plástico Eliminado", `El plástico "${plasticToDelete.name}" ha sido eliminado.`);
+                } catch (error) {
+                    console.error("Error eliminando plástico:", error);
+                    showMessage("Error de Base de Datos", "No se pudo eliminar el plástico: " + error.message);
+                }
+            }
         }
 
 
@@ -651,18 +715,22 @@
             selects.forEach(select => {
                 const currentValue = select.value;
                 select.innerHTML = '<option value="" class="bg-slate-700">Seleccione un plástico...</option>';
-                const sortedPlastics = [...plastics].sort((a, b) => a.name.localeCompare(b.name));
-                sortedPlastics.forEach(p => {
-                    const option = document.createElement('option');
-                    option.value = p.id;
-                    option.textContent = `${p.name} (${p.quantity}g disp.)`;
-                    option.className = "bg-slate-700";
-                    select.appendChild(option);
-                });
-                if (plastics.find(p => p.id === currentValue)) {
-                    select.value = currentValue;
+                if (userId && plastics.length > 0) { // Only populate if logged in and plastics exist
+                    const sortedPlastics = [...plastics].sort((a, b) => a.name.localeCompare(b.name));
+                    sortedPlastics.forEach(p => {
+                        const option = document.createElement('option');
+                        option.value = p.id;
+                        option.textContent = `${p.name} (${p.quantity}g disp.)`;
+                        option.className = "bg-slate-700";
+                        select.appendChild(option);
+                    });
+                    if (plastics.find(p => p.id === currentValue)) {
+                        select.value = currentValue;
+                    } else {
+                        select.value = "";
+                    }
                 } else {
-                    select.value = "";
+                     select.value = ""; // Ensure select is cleared if no user or no plastics
                 }
             });
         }
@@ -672,6 +740,7 @@
         addStockDeductPlasticCheck.addEventListener('change', () => addStockPlasticDetailsDiv.classList.toggle('hidden', !addStockDeductPlasticCheck.checked));
 
         async function addFabProduct() {
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión para agregar productos."); return; }
             const name = fabProductNameInput.value.trim();
             const price = parseFloat(fabProductPriceInput.value);
             const quantityManufactured = parseInt(fabProductQuantityInput.value);
@@ -695,7 +764,7 @@
                 }
                 selectedPlasticForDb = plastics.find(p => p.id === plasticTypeId);
                 if (!selectedPlasticForDb) {
-                    showMessage("Error", "Tipo de plástico seleccionado no válido.");
+                    showMessage("Error", "Tipo de plástico seleccionado no válido o no disponible.");
                     return;
                 }
                 totalPlasticNeeded = gramsPerUnit * quantityManufactured;
@@ -724,7 +793,7 @@
                     }
                     batch.update(productDocRef(existingProduct.id), updateData);
                 } else {
-                    const newProductRef = doc(productsCollectionRef()); // Generate new doc ref for ID
+                    const newProductRef = doc(productsCollectionRef()); 
                      batch.set(newProductRef, { 
                         name,
                         price,
@@ -755,6 +824,10 @@
 
         function renderFabProductList() {
             fabProductListDiv.innerHTML = '';
+             if (!userId) {
+                 fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar productos.</p>';
+                 return;
+            }
             if (products.length === 0) {
                 fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">No hay productos fabricados.</p>';
             } else {
@@ -791,6 +864,7 @@
         }
 
         function openEditFabProductModal(productId) {
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión para editar."); return; }
             const product = products.find(p => p.id === productId);
             if (product) {
                 editFabProductIdInput.value = product.id;
@@ -810,7 +884,7 @@
                 }
                 editFabProductImageInput.value = '';
 
-                addStockDeductPlasticCheck.checked = !!product.plasticCostPerUnit; // Check if plasticCost was defined
+                addStockDeductPlasticCheck.checked = !!product.plasticCostPerUnit; 
                 addStockPlasticDetailsDiv.classList.toggle('hidden', !addStockDeductPlasticCheck.checked);
                 addStockPlasticTypeSelect.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.typeId : '';
                 addStockPlasticGramsUnitInput.value = product.plasticCostPerUnit ? product.plasticCostPerUnit.amount : '';
@@ -820,6 +894,7 @@
         }
 
         saveEditFabButton.addEventListener('click', async () => {
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión para guardar."); return; }
             const productId = editFabProductIdInput.value;
             const product = products.find(p => p.id === productId);
             if (!product) { showMessage("Error", "Producto no encontrado."); return; }
@@ -843,7 +918,7 @@
                     if (!plasticTypeId || isNaN(gramsPerUnit) || gramsPerUnit <= 0) { showMessage("Error", "Para nuevo lote, seleccione plástico y gramos válidos."); return; }
                     
                     const selectedPlastic = plastics.find(p => p.id === plasticTypeId);
-                    if (!selectedPlastic) { showMessage("Error", "Tipo de plástico para nuevo lote no válido."); return; }
+                    if (!selectedPlastic) { showMessage("Error", "Tipo de plástico para nuevo lote no válido o no disponible."); return; }
                     
                     const totalPlasticForNewBatch = gramsPerUnit * additionalQuantity;
                     if (selectedPlastic.quantity < totalPlasticForNewBatch) {
@@ -888,26 +963,30 @@
         });
 
         async function deleteFabProduct(productId) {
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión para eliminar."); return; }
             const productToDelete = products.find(p => p.id === productId);
             if (!productToDelete) return;
-            // Placeholder for a proper confirmation modal
-            showMessage("Confirmar Eliminación", `¿Seguro que deseas eliminar el producto "${productToDelete.name}" del inventario? (Alerta de confirmación pendiente)`, true);
-            // setTimeout(async () => { // Replace with real confirm modal logic
-                // if (userConfirmed) {
-                    try {
-                        await deleteDoc(productDocRef(productId));
-                        showMessage("Producto Eliminado", `El producto "${productToDelete.name}" ha sido eliminado.`);
-                    } catch (error) {
-                        console.error("Error eliminando producto:", error);
-                        showMessage("Error de Base de Datos", "No se pudo eliminar el producto: " + error.message);
-                    }
-                // }
-            // }, 500);
+
+            // TODO: Implement a proper confirmation modal here.
+            const confirmDelete = window.confirm(`¿Seguro que deseas eliminar el producto "${productToDelete.name}" del inventario? Esta acción no se puede deshacer.`);
+            if (confirmDelete) {
+                try {
+                    await deleteDoc(productDocRef(productId));
+                    showMessage("Producto Eliminado", `El producto "${productToDelete.name}" ha sido eliminado.`);
+                } catch (error) {
+                    console.error("Error eliminando producto:", error);
+                    showMessage("Error de Base de Datos", "No se pudo eliminar el producto: " + error.message);
+                }
+            }
         }
 
         // --- Lógica del Punto de Venta (POS) ---
         function renderProductsForSalePOS() {
             posProductListDiv.innerHTML = '';
+            if (!userId) {
+                 posProductListDiv.innerHTML = '<p class="text-secondary text-sm col-span-full">Inicie sesión para ver productos disponibles.</p>';
+                 return;
+            }
             const availableProducts = products.filter(p => p.stock > 0);
             const sortedAvailableProducts = [...availableProducts].sort((a,b) => a.name.localeCompare(b.name));
 
@@ -934,6 +1013,7 @@
         }
 
         function addProductToCartPOS(productId) {
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión para agregar al carrito."); return; }
             const product = products.find(p => p.id === productId);
             if (product && product.stock > 0) {
                 cart.push({...product, cartItemId: `cart_${Date.now()}_${Math.random().toString(36).substr(2,5)}` });
@@ -985,6 +1065,7 @@
         }
 
         posClearCartButton.addEventListener('click', () => {
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión."); return; }
             if (cart.length > 0) {
                 cart.forEach(cartItem => {
                     const productInInventory = products.find(p => p.id === cartItem.id);
@@ -997,6 +1078,7 @@
         });
 
         posCheckoutButton.addEventListener('click', async () => {
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión para finalizar la venta."); return; }
             if (cart.length === 0) {
                 showMessage("Venta Vacía", "No hay productos en el carrito.");
                 return;
@@ -1021,9 +1103,8 @@
                         console.warn(`Producto con ID ${item.id} no encontrado en array local durante checkout.`);
                     }
                 }
-                await batch.commit(); // Commit stock updates first
+                await batch.commit(); 
 
-                // Add sale to completedSales after stock updates are successful
                 await addDoc(completedSalesCollectionRef(), {
                     items: saleItemsForDb,
                     totalAmount: saleAmount,
@@ -1037,7 +1118,6 @@
                 cart = [];
                 renderDailySalesDisplay();
                 renderCartPOS();
-                // renderProductsForSalePOS() will be called by onSnapshot for products
                 
             } catch (error) {
                 console.error("Error durante el checkout:", error);
@@ -1052,39 +1132,40 @@
 
         // --- Opciones de Tienda (Resumen, Reinicio) ---
         resetStoreSalesButton.addEventListener('click', async () => {
-            // Placeholder for a proper confirmation modal
-            showMessage("Confirmar Nuevo Día", "¿Empezar un nuevo día de caja? Se borrarán ventas y carrito. (Alerta de confirmación pendiente)", true);
-            // setTimeout(async () => { // Replace with real confirm modal logic
-                // if (userConfirmed) {
-                    totalSales = 0;
-                    localStorage.removeItem('posTotalSales');
-                    
-                    try {
-                        const salesQuery = query(completedSalesCollectionRef());
-                        const salesSnapshot = await getDocs(salesQuery);
-                        const batch = writeBatch(db);
-                        salesSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-                        await batch.commit();
-                    } catch (error) {
-                        console.error("Error reiniciando ventas del día en Firestore:", error);
-                        showMessage("Error de BD", "No se pudieron borrar las ventas anteriores de la BD.");
-                    }
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión."); return; }
+            
+            // TODO: Implement a proper confirmation modal here.
+            const confirmReset = window.confirm("¿Empezar un nuevo día de caja? Se borrarán ventas y carrito. Esta acción no se puede deshacer.");
+            if (confirmReset) {
+                totalSales = 0;
+                localStorage.removeItem(`posTotalSales_${userId}`); // User-specific local storage
+                
+                try {
+                    const salesQuery = query(completedSalesCollectionRef());
+                    const salesSnapshot = await getDocs(salesQuery);
+                    const batch = writeBatch(db);
+                    salesSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                } catch (error) {
+                    console.error("Error reiniciando ventas del día en Firestore:", error);
+                    showMessage("Error de BD", "No se pudieron borrar las ventas anteriores de la BD.");
+                }
 
-                    if (cart.length > 0) {
-                        cart.forEach(cartItem => {
-                            const productInInventory = products.find(p => p.id === cartItem.id);
-                            if (productInInventory) productInInventory.stock++; 
-                        });
-                        cart = [];
-                    }
-                    
-                    renderAll(); 
-                    showMessage('Nuevo Día Iniciado', 'Los contadores de ventas y el carrito han sido reiniciados.');
-                // }
-            // }, 500);
+                if (cart.length > 0) {
+                    cart.forEach(cartItem => {
+                        const productInInventory = products.find(p => p.id === cartItem.id);
+                        if (productInInventory) productInInventory.stock++; 
+                    });
+                    cart = [];
+                }
+                
+                renderAll(); 
+                showMessage('Nuevo Día Iniciado', 'Los contadores de ventas y el carrito han sido reiniciados.');
+            }
         });
 
         generateStoreSummaryButton.addEventListener('click', () => {
+            if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión para ver el resumen."); return; }
             if (completedSales.length === 0) {
                 showMessage('Resumen de Ventas', 'No hay ventas registradas para este período.');
                 return;
@@ -1104,15 +1185,23 @@
                 summaryText += `- ${p.name}:\n  Cantidad: ${p.quantity}\n  Ingresos: ARS ${p.totalRevenue.toFixed(2)}\n`;
             });
             if (Object.keys(productSummary).length === 0) summaryText += `No se vendieron productos específicos.\n`;
-            summaryText += `\nTotal Ventas (local): ARS ${totalSales.toFixed(2)}</pre>`;
+            summaryText += `\nTotal Ventas (local): ARS ${totalSales.toFixed(2)}</pre>`; // totalSales is now user-specific
             showMessage('Resumen de Ventas', summaryText, true);
         });
 
-        // --- Funciones de LocalStorage ---
-        function saveTotalSalesToLocalStorage() { localStorage.setItem('posTotalSales', JSON.stringify(totalSales)); }
+        // --- Funciones de LocalStorage (User-specific) ---
+        function saveTotalSalesToLocalStorage() {
+            if (userId) {
+                localStorage.setItem(`posTotalSales_${userId}`, JSON.stringify(totalSales));
+            }
+        }
         function loadTotalSalesFromLocalStorage() {
-            const storedSales = localStorage.getItem('posTotalSales');
-            totalSales = storedSales ? JSON.parse(storedSales) : 0;
+            if (userId) {
+                const storedSales = localStorage.getItem(`posTotalSales_${userId}`);
+                totalSales = storedSales ? JSON.parse(storedSales) : 0;
+            } else {
+                totalSales = 0; // Reset if no user
+            }
         }
         
         // --- Renderizado de Ventas del Día ---
@@ -1132,17 +1221,37 @@
             renderDailySalesDisplay();
         }
 
+        function clearLocalData() {
+            plastics = [];
+            products = [];
+            cart = [];
+            completedSales = [];
+            totalSales = 0;
+            renderAll(); // Update UI to reflect cleared data
+        }
+
         // --- Carga de Datos desde Firestore con onSnapshot ---
         function setupFirestoreListeners() {
             if (!userId) {
-                console.error("UserID no disponible. No se pueden configurar listeners de Firestore.");
-                loadingIndicator.textContent = "Error: Usuario no autenticado.";
+                console.warn("UserID no disponible. No se pueden configurar listeners de Firestore.");
+                // Clear data and UI if user logs out or is not available
+                clearLocalData();
+                plasticStockListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar plásticos.</p>';
+                fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar productos.</p>';
+                posProductListDiv.innerHTML = '<p class="text-secondary text-sm col-span-full">Inicie sesión para ver productos disponibles.</p>';
+                loadingIndicator.classList.add('hidden');
                 return;
             }
+            loadingIndicator.textContent = "Cargando datos...";
             loadingIndicator.classList.remove('hidden');
 
+            // Detach any existing listeners before attaching new ones
+            unsubscribePlastics();
+            unsubscribeProducts();
+            unsubscribeSales();
+
             const plasticsQuery = query(plasticsCollectionRef());
-            onSnapshot(plasticsQuery, (snapshot) => {
+            unsubscribePlastics = onSnapshot(plasticsQuery, (snapshot) => {
                 plastics = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderAll();
                 loadingIndicator.classList.add('hidden');
@@ -1153,7 +1262,7 @@
             });
 
             const productsQuery = query(productsCollectionRef());
-            onSnapshot(productsQuery, (snapshot) => {
+            unsubscribeProducts = onSnapshot(productsQuery, (snapshot) => {
                 products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderAll();
                 loadingIndicator.classList.add('hidden');
@@ -1164,10 +1273,10 @@
             });
 
             const salesQuery = query(completedSalesCollectionRef());
-            onSnapshot(salesQuery, (snapshot) => {
+            unsubscribeSales = onSnapshot(salesQuery, (snapshot) => {
                 completedSales = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                // No es necesario renderAll() aquí a menos que afecte directamente la UI principal.
-                // El resumen de ventas lo usa, y el total de ventas del día se actualiza en checkout.
+                loadTotalSalesFromLocalStorage(); // Recalculate based on potentially new sales for summary
+                renderDailySalesDisplay(); // Update daily sales display
                 loadingIndicator.classList.add('hidden');
             }, (error) => {
                 console.error("Error escuchando cambios en ventas completadas:", error);
@@ -1175,43 +1284,47 @@
             });
         }
         
-        async function initializeAppFirebase() {
+        async function initializeAppCore() {
             loadingIndicator.classList.remove('hidden');
-            loadingIndicator.textContent = "Autenticando...";
-            try {
-                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
+            loadingIndicator.textContent = "Verificando sesión...";
+            
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    userInfoDisplay.textContent = user.displayName || user.email || "Usuario Autenticado";
+                    userInfoDisplay.classList.remove('hidden');
+                    googleSigninButton.classList.add('hidden');
+                    signoutButton.classList.remove('hidden');
+                    
+                    console.log("Usuario autenticado:", userId, user.email);
+                    loadingIndicator.textContent = "Cargando datos...";
+                    setupFirestoreListeners();
+                    loadTotalSalesFromLocalStorage(); // Load sales for this user
+                    renderDailySalesDisplay();
                 } else {
-                    // Fallback to anonymous sign-in if no token is provided (for local dev or other scenarios)
-                    console.warn("Canvas initial auth token not found, attempting anonymous sign-in.");
-                    await signInAnonymously(auth);
+                    userId = null;
+                    userInfoDisplay.textContent = "";
+                    userInfoDisplay.classList.add('hidden');
+                    googleSigninButton.classList.remove('hidden');
+                    signoutButton.classList.add('hidden');
+                    
+                    console.log("Usuario no autenticado.");
+                    loadingIndicator.classList.add('hidden'); // Hide loading if no user
+                    clearLocalData(); // Clear data shown in UI
+                     // Display messages for logged-out state
+                    plasticStockListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar plásticos.</p>';
+                    fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar productos.</p>';
+                    posProductListDiv.innerHTML = '<p class="text-secondary text-sm col-span-full">Inicie sesión para ver productos disponibles.</p>';
+
+                    // Detach listeners if user logs out
+                    unsubscribePlastics();
+                    unsubscribeProducts();
+                    unsubscribeSales();
+                    // Optional: Clear Firestore persistence if you want a fully clean slate on logout
+                    // clearPersistence(db).catch(err => console.error("Error clearing persistence", err));
+
                 }
-
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        if (userIdDisplay) userIdDisplay.textContent = userId;
-                        console.log("Usuario autenticado:", userId);
-                        loadingIndicator.textContent = "Cargando datos...";
-                        setupFirestoreListeners();
-                        loadTotalSalesFromLocalStorage();
-                        renderDailySalesDisplay();
-                    } else {
-                        userId = null;
-                        if (userIdDisplay) userIdDisplay.textContent = "No autenticado";
-                        console.log("Usuario no autenticado.");
-                        loadingIndicator.textContent = "Error: Autenticación fallida.";
-                        showMessage("Error de Autenticación", "No se pudo autenticar el usuario. Algunas funciones pueden no estar disponibles.");
-                        // Consider disabling UI elements that require auth here
-                    }
-                });
-
-            } catch (error) {
-                console.error("Error inicializando Firebase Auth:", error);
-                loadingIndicator.textContent = "Error de autenticación.";
-                showMessage("Error Crítico", "No se pudo inicializar la autenticación de Firebase: " + error.message);
-            }
+            });
 
             const activeTabId = localStorage.getItem('activeStoreTab') || 'tab-inventario';
             const buttonToActivate = document.getElementById(activeTabId) || tabInventarioButton;
@@ -1223,10 +1336,10 @@
         tabInventarioButton.addEventListener('click', () => setActiveTab(tabInventarioButton, contentInventario));
         tabPosButton.addEventListener('click', () => {
             setActiveTab(tabPosButton, contentPos);
-            renderProductsForSalePOS(); 
+            if (userId) renderProductsForSalePOS(); 
         });
 
-        document.addEventListener('DOMContentLoaded', initializeAppFirebase);
+        document.addEventListener('DOMContentLoaded', initializeAppCore);
     </script>
 </body>
 </html>
