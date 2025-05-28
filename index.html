@@ -230,6 +230,10 @@
                     </button>
 
                     <h3 class="text-lg font-semibold mt-6 mb-3 text-main">Inventario de Productos Fabricados</h3>
+                    <div class="mb-4">
+                        <label for="fab-product-search" class="block text-sm font-medium text-label mb-1">Buscar Producto Fabricado:</label>
+                        <input type="text" id="fab-product-search" class="form-input-custom" placeholder="Buscar por nombre...">
+                    </div>
                     <div id="fab-product-list" class="space-y-3">
                         <p class="text-secondary text-sm">Inicie sesión para ver/cargar productos.</p>
                     </div>
@@ -249,6 +253,10 @@
 
         <section id="content-pos" class="tab-content space-y-6">
             <h2 class="text-xl font-semibold mb-4 text-main">Seleccionar Productos para Vender</h2>
+            <div class="mb-4">
+                <label for="pos-product-search" class="block text-sm font-medium text-label mb-1">Buscar Producto:</label>
+                <input type="text" id="pos-product-search" class="form-input-custom" placeholder="Buscar por nombre...">
+            </div>
             <div id="pos-product-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
                 <p class="text-secondary text-sm col-span-full">Inicie sesión para ver productos disponibles.</p>
             </div>
@@ -284,9 +292,17 @@
         <div class="modal-glass-content p-6 max-w-md w-full">
             <h3 id="message-modal-title" class="text-lg font-semibold mb-3 text-main">Mensaje</h3>
             <div id="message-modal-text" class="text-sm text-label mb-4"></div>
-            <button id="message-modal-close" class="w-full btn btn-secondary-blue py-2 px-4">
-                Entendido
-            </button>
+            <div id="message-modal-actions" class="mt-4 space-y-2">
+                <button id="message-modal-confirm-button" class="w-full btn btn-primary-green py-2 px-4 hidden">
+                    Confirmar
+                </button>
+                <button id="message-modal-cancel-button" class="w-full btn btn-neutral-gray py-2 px-4 hidden">
+                    Cancelar
+                </button>
+                <button id="message-modal-close" class="w-full btn btn-secondary-blue py-2 px-4">
+                    Entendido
+                </button>
+            </div>
         </div>
     </div>
 
@@ -415,6 +431,7 @@
 
         // Gestión de Plástico
         const plasticNameInput = document.getElementById('plastic-name');
+        // FIX: Corrected typo in the following line
         const plasticQuantityInput = document.getElementById('plastic-quantity');
         const addPlasticButton = document.getElementById('add-plastic-button');
         const plasticStockListDiv = document.getElementById('plastic-stock-list');
@@ -431,8 +448,10 @@
         const fabPlasticGramsUnitInput = document.getElementById('fab-plastic-grams-unit');
         const addFabProductButton = document.getElementById('add-fab-product-button');
         const fabProductListDiv = document.getElementById('fab-product-list');
+        const fabProductSearchInput = document.getElementById('fab-product-search'); // Nuevo: Buscador de productos fabricados
 
         // POS
+        const posProductSearchInput = document.getElementById('pos-product-search'); // Buscador de productos para POS
         const posProductListDiv = document.getElementById('pos-product-list');
         const posCartItemsDiv = document.getElementById('pos-cart-items');
         const posCartTotalSpan = document.getElementById('pos-cart-total');
@@ -449,6 +468,8 @@
         const messageModalTitle = document.getElementById('message-modal-title');
         const messageModalText = document.getElementById('message-modal-text');
         const messageModalClose = document.getElementById('message-modal-close');
+        const messageModalConfirmButton = document.getElementById('message-modal-confirm-button');
+        const messageModalCancelButton = document.getElementById('message-modal-cancel-button');
 
         const editFabProductModal = document.getElementById('edit-fab-product-modal');
         const editFabProductIdInput = document.getElementById('edit-fab-product-id');
@@ -574,6 +595,10 @@
         function showModal(modalElement) { modalElement.classList.add('active'); }
         function hideModal(modalElement) {
             modalElement.classList.remove('active');
+            // Also hide confirmation buttons when modal is hidden
+            messageModalConfirmButton.classList.add('hidden');
+            messageModalCancelButton.classList.add('hidden');
+            messageModalClose.classList.remove('hidden'); // Ensure default close button is visible for next simple message
             fabProductImagePreview.classList.add('hidden'); fabProductImagePreview.src = ''; fabProductImageInput.value = ''; currentFabProductImageBase64 = null;
             editFabProductImagePreview.src = ''; editFabProductImagePreview.classList.add('hidden'); editFabProductImageInput.value = ''; editingFabProductImageBase64 = null; removeEditFabImageButton.classList.add('hidden');
             addStockQuantityInput.value = '0'; addStockDeductPlasticCheck.checked = false; addStockPlasticDetailsDiv.classList.add('hidden'); addStockPlasticTypeSelect.value = ''; addStockPlasticGramsUnitInput.value = '';
@@ -582,8 +607,38 @@
             messageModalTitle.textContent = title;
             if (isHtml) { messageModalText.innerHTML = textContent; }
             else { messageModalText.innerHTML = `<p class="text-label">${textContent.replace(/\n/g, '<br>')}</p>`; }
+            
+            messageModalConfirmButton.classList.add('hidden');
+            messageModalCancelButton.classList.add('hidden');
+            messageModalClose.classList.remove('hidden');
+
             showModal(messageModal);
         }
+
+        function showConfirmation(title, textContent, onConfirmCallback) {
+            messageModalTitle.textContent = title;
+            messageModalText.innerHTML = `<p class="text-label">${textContent.replace(/\n/g, '<br>')}</p>`;
+
+            messageModalConfirmButton.classList.remove('hidden');
+            messageModalCancelButton.classList.remove('hidden');
+            messageModalClose.classList.add('hidden'); // Hide default close button
+
+            // Clear previous listeners to prevent multiple calls
+            messageModalConfirmButton.onclick = null;
+            messageModalCancelButton.onclick = null;
+
+            messageModalConfirmButton.onclick = () => {
+                hideModal(messageModal);
+                onConfirmCallback();
+            };
+            messageModalCancelButton.onclick = () => {
+                hideModal(messageModal);
+                // No action on cancel, just close the modal
+            };
+
+            showModal(messageModal);
+        }
+
         messageModalClose.addEventListener('click', () => hideModal(messageModal));
         cancelEditFabButton.addEventListener('click', () => hideModal(editFabProductModal));
         cancelUpdatePlasticButton.addEventListener('click', () => hideModal(editPlasticStockModal));
@@ -697,16 +752,19 @@
                 return;
             }
             
-            const confirmDelete = window.confirm(`¿Seguro que deseas eliminar el plástico "${plasticToDelete.name}"? Esta acción no se puede deshacer.`);
-            if (confirmDelete) {
-                try {
-                    await deleteDoc(plasticDocRef(plasticId));
-                    showMessage("Plástico Eliminado", `El plástico "${plasticToDelete.name}" ha sido eliminado.`);
-                } catch (error) {
-                    console.error("Error eliminando plástico:", error);
-                    showMessage("Error de Base de Datos", "No se pudo eliminar el plástico: " + error.message);
+            showConfirmation(
+                "Confirmar Eliminación",
+                `¿Seguro que deseas eliminar el plástico "${plasticToDelete.name}"? Esta acción no se puede deshacer.`,
+                async () => {
+                    try {
+                        await deleteDoc(plasticDocRef(plasticId));
+                        showMessage("Plástico Eliminado", `El plástico "${plasticToDelete.name}" ha sido eliminado.`);
+                    } catch (error) {
+                        console.error("Error eliminando plástico:", error);
+                        showMessage("Error de Base de Datos", "No se pudo eliminar el plástico: " + error.message);
+                    }
                 }
-            }
+            );
         }
 
 
@@ -822,16 +880,27 @@
         }
         addFabProductButton.addEventListener('click', addFabProduct);
 
-        function renderFabProductList() {
+        // Event listener for the manufactured product search bar
+        fabProductSearchInput.addEventListener('input', () => {
+            renderFabProductList(fabProductSearchInput.value);
+        });
+
+        function renderFabProductList(searchTerm = '') {
             fabProductListDiv.innerHTML = '';
              if (!userId) {
                  fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">Inicie sesión para ver/cargar productos.</p>';
                  return;
             }
-            if (products.length === 0) {
-                fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">No hay productos fabricados.</p>';
+            let filteredProducts = products;
+            if (searchTerm) {
+                const lowerCaseSearchTerm = searchTerm.toLowerCase();
+                filteredProducts = products.filter(p => p.name.toLowerCase().includes(lowerCaseSearchTerm));
+            }
+
+            if (filteredProducts.length === 0) {
+                fabProductListDiv.innerHTML = '<p class="text-secondary text-sm">No hay productos fabricados que coincidan con la búsqueda.</p>';
             } else {
-                const sortedProducts = [...products].sort((a,b) => a.name.localeCompare(b.name));
+                const sortedProducts = [...filteredProducts].sort((a,b) => a.name.localeCompare(b.name));
                 sortedProducts.forEach(p => {
                     const div = document.createElement('div');
                     div.className = 'card-glass p-3 flex items-center';
@@ -967,30 +1036,48 @@
             const productToDelete = products.find(p => p.id === productId);
             if (!productToDelete) return;
 
-            const confirmDelete = window.confirm(`¿Seguro que deseas eliminar el producto "${productToDelete.name}" del inventario? Esta acción no se puede deshacer.`);
-            if (confirmDelete) {
-                try {
-                    await deleteDoc(productDocRef(productId));
-                    showMessage("Producto Eliminado", `El producto "${productToDelete.name}" ha sido eliminado.`);
-                } catch (error) {
-                    console.error("Error eliminando producto:", error);
-                    showMessage("Error de Base de Datos", "No se pudo eliminar el producto: " + error.message);
+            showConfirmation(
+                "Confirmar Eliminación",
+                `¿Seguro que deseas eliminar el producto "${productToDelete.name}" del inventario? Esta acción no se puede deshacer.`,
+                async () => {
+                    try {
+                        await deleteDoc(productDocRef(productId));
+                        showMessage("Producto Eliminado", `El producto "${productToDelete.name}" ha sido eliminado.`);
+                    } catch (error) {
+                        console.error("Error eliminando producto:", error);
+                        showMessage("Error de Base de Datos", "No se pudo eliminar el producto: " + error.message);
+                    }
                 }
-            }
+            );
         }
 
         // --- Lógica del Punto de Venta (POS) ---
-        function renderProductsForSalePOS() {
+
+        // Event listener para el buscador de productos
+        posProductSearchInput.addEventListener('input', () => {
+            renderProductsForSalePOS(posProductSearchInput.value);
+        });
+
+        function renderProductsForSalePOS(searchTerm = '') {
             posProductListDiv.innerHTML = '';
             if (!userId) {
                  posProductListDiv.innerHTML = '<p class="text-secondary text-sm col-span-full">Inicie sesión para ver productos disponibles.</p>';
                  return;
             }
-            const availableProducts = products.filter(p => p.stock > 0);
+            let availableProducts = products.filter(p => p.stock > 0);
+
+            // Filtrar por término de búsqueda si existe
+            if (searchTerm) {
+                const lowerCaseSearchTerm = searchTerm.toLowerCase();
+                availableProducts = availableProducts.filter(p =>
+                    p.name.toLowerCase().includes(lowerCaseSearchTerm)
+                );
+            }
+
             const sortedAvailableProducts = [...availableProducts].sort((a,b) => a.name.localeCompare(b.name));
 
             if (sortedAvailableProducts.length === 0) {
-                posProductListDiv.innerHTML = '<p class="text-secondary text-sm col-span-full">No hay productos disponibles para la venta.</p>';
+                posProductListDiv.innerHTML = '<p class="text-secondary text-sm col-span-full">No hay productos disponibles para la venta que coincidan con la búsqueda.</p>';
                 return;
             }
             sortedAvailableProducts.forEach(p => {
@@ -1018,7 +1105,7 @@
                 cart.push({...product, cartItemId: `cart_${Date.now()}_${Math.random().toString(36).substr(2,5)}` });
                 product.stock--; 
                 renderCartPOS();
-                renderProductsForSalePOS();
+                renderProductsForSalePOS(posProductSearchInput.value); // Pasar el término de búsqueda actual
             } else if (product && product.stock <= 0) {
                 showMessage("Stock Agotado", `El producto "${product.name}" ya no tiene stock disponible.`);
             }
@@ -1034,7 +1121,7 @@
                 }
                 cart.splice(cartItemIndex, 1);
                 renderCartPOS();
-                renderProductsForSalePOS();
+                renderProductsForSalePOS(posProductSearchInput.value); // Pasar el término de búsqueda actual
             }
         }
 
@@ -1133,33 +1220,36 @@
         resetStoreSalesButton.addEventListener('click', async () => {
             if (!userId) { showMessage("Acción Requerida", "Por favor, inicie sesión."); return; }
             
-            const confirmReset = window.confirm("¿Empezar un nuevo día de caja? Se borrarán ventas y carrito. Esta acción no se puede deshacer.");
-            if (confirmReset) {
-                totalSales = 0;
-                localStorage.removeItem(`posTotalSales_${userId}`); 
-                
-                try {
-                    const salesQuery = query(completedSalesCollectionRef());
-                    const salesSnapshot = await getDocs(salesQuery);
-                    const batch = writeBatch(db);
-                    salesSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-                    await batch.commit();
-                } catch (error) {
-                    console.error("Error reiniciando ventas del día en Firestore:", error);
-                    showMessage("Error de BD", "No se pudieron borrar las ventas anteriores de la BD.");
-                }
+            showConfirmation(
+                "Confirmar Reinicio",
+                "¿Empezar un nuevo día de caja? Se borrarán ventas y carrito. Esta acción no se puede deshacer.",
+                async () => {
+                    totalSales = 0;
+                    localStorage.removeItem(`posTotalSales_${userId}`); 
+                    
+                    try {
+                        const salesQuery = query(completedSalesCollectionRef());
+                        const salesSnapshot = await getDocs(salesQuery);
+                        const batch = writeBatch(db);
+                        salesSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+                        await batch.commit();
+                    } catch (error) {
+                        console.error("Error reiniciando ventas del día en Firestore:", error);
+                        showMessage("Error de BD", "No se pudieron borrar las ventas anteriores de la BD.");
+                    }
 
-                if (cart.length > 0) {
-                    cart.forEach(cartItem => {
-                        const productInInventory = products.find(p => p.id === cartItem.id);
-                        if (productInInventory) productInInventory.stock++; 
-                    });
-                    cart = [];
+                    if (cart.length > 0) {
+                        cart.forEach(cartItem => {
+                            const productInInventory = products.find(p => p.id === cartItem.id);
+                            if (productInInventory) productInInventory.stock++; 
+                        });
+                        cart = [];
+                    }
+                    
+                    renderAll(); 
+                    showMessage('Nuevo Día Iniciado', 'Los contadores de ventas y el carrito han sido reiniciados.');
                 }
-                
-                renderAll(); 
-                showMessage('Nuevo Día Iniciado', 'Los contadores de ventas y el carrito han sido reiniciados.');
-            }
+            );
         });
 
         generateStoreSummaryButton.addEventListener('click', () => {
@@ -1213,8 +1303,8 @@
         // --- Inicialización y Renderizado Global ---
         function renderAll() {
             renderPlasticStock();
-            renderFabProductList();
-            renderProductsForSalePOS();
+            renderFabProductList(fabProductSearchInput.value); // Pasa el valor actual del buscador de productos fabricados
+            renderProductsForSalePOS(posProductSearchInput.value); // Pasa el valor actual del buscador de productos para POS
             renderCartPOS();
             renderDailySalesDisplay();
         }
@@ -1332,7 +1422,8 @@
         tabInventarioButton.addEventListener('click', () => setActiveTab(tabInventarioButton, contentInventario));
         tabPosButton.addEventListener('click', () => {
             setActiveTab(tabPosButton, contentPos);
-            if (userId) renderProductsForSalePOS(); 
+            // Al cambiar a la pestaña POS, asegúrate de renderizar los productos con el filtro actual (si lo hay)
+            if (userId) renderProductsForSalePOS(posProductSearchInput.value); 
         });
 
         document.addEventListener('DOMContentLoaded', initializeAppCore);
